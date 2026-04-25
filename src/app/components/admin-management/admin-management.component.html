@@ -1,0 +1,480 @@
+<div class="admin-management-container">
+  <header class="page-header">
+    <button class="btn-back" (click)="goBack()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Back
+    </button>
+    <h1 class="page-title">Admin Management</h1>
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      {{ error() }}
+    </div>
+  }
+
+  @if (successMessage()) {
+    <div class="alert alert-success">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+      {{ successMessage() }}
+    </div>
+  }
+
+  <div class="tabs">
+    @if (can('group_view')) {
+      <button
+        class="tab-button"
+        [class.active]="activeTab() === 'groups'"
+        (click)="activeTab.set('groups')">
+        Groups Management
+      </button>
+    }
+    @if (canAny(['group_permission_view', 'group_permission_manage'])) {
+      <button
+        class="tab-button"
+        [class.active]="activeTab() === 'permissions'"
+        (click)="activeTab.set('permissions')">
+        Permission Parameters
+      </button>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+  } @else {
+    <div class="tab-content">
+      <!-- Groups Management Tab -->
+      @if (activeTab() === 'groups' && can('group_view')) {
+        <div class="groups-section">
+          <div class="section-header">
+            <h2>Groups</h2>
+            @if (can('group_create')) {
+              <button class="btn btn-primary" (click)="openCreateGroupDialog()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Create Group
+              </button>
+            }
+          </div>
+
+          @if (can('group_view_group')) {
+            <div class="section-header">
+              <h2>Get Group by ID</h2>
+              <div class="group-actions">
+                <input
+                  type="number"
+                  class="form-control"
+                  placeholder="Group ID"
+                  [ngModel]="groupIdSearch()"
+                  (ngModelChange)="groupIdSearch.set($event)"
+                >
+                <button class="btn btn-sm btn-info" (click)="findGroupById()">Find</button>
+              </div>
+            </div>
+          }
+
+          @if (selectedGroupById()) {
+            <div class="group-card">
+              <div class="group-header">
+                <h3>{{ selectedGroupById()!.name }}</h3>
+                <span class="member-count">ID: {{ selectedGroupById()!.id }}</span>
+              </div>
+              @if (selectedGroupById()!.description) {
+                <p class="group-description">{{ selectedGroupById()!.description }}</p>
+              }
+            </div>
+          }
+
+          @if (groups().length === 0) {
+            <div class="empty-state">
+              <p>No groups found. Create one to get started!</p>
+            </div>
+          } @else {
+            <div class="groups-grid">
+              @for (group of groups(); track group.id) {
+                <div class="group-card">
+                  <div class="group-header">
+                    <h3>{{ group.name }}</h3>
+                    <span class="member-count">{{ group.memberCount || 0 }} members</span>
+                  </div>
+
+                  @if (group.description) {
+                    <p class="group-description">{{ group.description }}</p>
+                  }
+
+                  <div class="group-footer">
+                    <div class="group-dates">
+                      @if (group.createdDate) {
+                        <span class="date">Created: {{ group.createdDate | date: 'short' }}</span>
+                      }
+                    </div>
+                    <div class="group-actions">
+                      @if (can('group_view_members')) {
+                        <button
+                          class="btn btn-sm btn-info"
+                          (click)="selectGroupForMembers(group)"
+                          title="View members">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                          </svg>
+                        </button>
+                      }
+                      @if (can('group_update_group')) {
+                        <button
+                          class="btn btn-sm btn-warning"
+                          (click)="openEditGroupDialog(group)"
+                          title="Edit group">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                          </svg>
+                        </button>
+                      }
+                      @if (can('group_delete_group')) {
+                        <button
+                          class="btn btn-sm btn-danger"
+                          (click)="deleteGroup(group)"
+                          title="Delete group">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                          </svg>
+                        </button>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Permissions Matrix Tab -->
+      @if (activeTab() === 'permissions' && canAny(['group_permission_view', 'group_permission_manage'])) {
+        <div class="permissions-section">
+          <div class="section-header">
+            <h2>Grant Permissions By Group</h2>
+            <button class="btn btn-primary" (click)="savePermissions()" [disabled]="savingPermissions() || !can('group_permission_manage')">
+              @if (savingPermissions()) {
+                Saving...
+              } @else {
+                Save Permissions
+              }
+            </button>
+          </div>
+
+          <p class="permissions-help">
+            Configure backend permission parameters per group. These keys map directly to /groups/:groupId/permissions.
+          </p>
+
+          @if (groups().length === 0) {
+            <div class="empty-state">
+              <p>No groups found. Create groups first, then configure permissions.</p>
+            </div>
+          } @else {
+            <div class="permissions-table-wrap">
+              <table class="permissions-table">
+                <thead>
+                  <tr>
+                    <th>Group</th>
+                    @for (action of availableActions; track action.key) {
+                      <th [title]="action.description">
+                        <div class="permission-label">{{ action.label }}</div>
+                        <div class="permission-key">{{ action.key }}</div>
+                      </th>
+                    }
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (group of groups(); track group.id) {
+                    <tr>
+                      <td class="group-col">{{ group.name }}</td>
+                      @for (action of availableActions; track action.key) {
+                        <td>
+                          <input
+                            type="checkbox"
+                            [checked]="hasGroupAction(group.id, action.key)"
+                            (change)="toggleGroupAction(group.id, action.key, $any($event.target).checked)"
+                            [disabled]="!can('group_permission_manage')"
+                            [attr.aria-label]="group.name + ' - ' + action.label"
+                          >
+                        </td>
+                      }
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Group Members Tab -->
+      @if (activeTab() === 'group-members' && selectedGroup() && can('group_view_members')) {
+        <div class="group-members-section">
+          <div class="section-header">
+            <button class="btn-back" (click)="activeTab.set('groups')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              Back to Groups
+            </button>
+            <h2>{{ selectedGroup()!.name }} - Members</h2>
+            @if (can('group_add_user')) {
+              <button
+                class="btn btn-primary"
+                (click)="openAddUserDialog(selectedGroup()!)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="8.5" cy="7" r="4"></circle>
+                  <line x1="20" y1="8" x2="20" y2="14"></line>
+                  <line x1="23" y1="11" x2="17" y2="11"></line>
+                </svg>
+                Add User
+              </button>
+            }
+          </div>
+
+          @if (loadingMembers()) {
+            <div class="loading-state">
+              <div class="spinner"></div>
+              <p>Loading members...</p>
+            </div>
+          } @else if (groupMembers().length === 0) {
+            <div class="empty-state">
+              <p>No members in this group yet. Add users to get started!</p>
+            </div>
+          } @else {
+            <div class="members-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Identifiant</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (member of groupMembers(); track member.id) {
+                    <tr>
+                      <td>{{ member.identifiant }}</td>
+                      <td>{{ member.fullName }}</td>
+                      <td>{{ member.email }}</td>
+                      <td><span class="badge">{{ member.role }}</span></td>
+                      <td><span class="badge" [class]="'status-' + member.status">{{ member.status }}</span></td>
+                      <td>
+                        @if (can('group_remove_user')) {
+                          <button
+                            class="btn btn-sm btn-danger"
+                            (click)="removeUserFromGroup(selectedGroup()!, member)"
+                            title="Remove user">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <polyline points="3 6 5 6 21 6"></polyline>
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                          </button>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Create Group Dialog -->
+  @if (showCreateGroupDialog()) {
+    <div class="modal-overlay" (click)="closeCreateGroupDialog()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Create New Group</h3>
+          <button class="btn-close" (click)="closeCreateGroupDialog()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="groupName">Group Name *</label>
+            <input
+              type="text"
+              id="groupName"
+              class="form-control"
+              [(ngModel)]="newGroupName"
+              placeholder="Enter group name">
+          </div>
+          <div class="form-group">
+            <label for="groupDescription">Description</label>
+            <textarea
+              id="groupDescription"
+              class="form-control"
+              [(ngModel)]="newGroupDescription"
+              placeholder="Enter group description"
+              rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="closeCreateGroupDialog()">Cancel</button>
+          <button class="btn btn-primary" (click)="createGroup()">Create Group</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Edit Group Dialog -->
+  @if (showEditGroupDialog()) {
+    <div class="modal-overlay" (click)="closeEditGroupDialog()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Edit Group</h3>
+          <button class="btn-close" (click)="closeEditGroupDialog()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="editGroupName">Group Name *</label>
+            <input
+              type="text"
+              id="editGroupName"
+              class="form-control"
+              [(ngModel)]="editingGroupName"
+              placeholder="Enter group name">
+          </div>
+          <div class="form-group">
+            <label for="editGroupDescription">Description</label>
+            <textarea
+              id="editGroupDescription"
+              class="form-control"
+              [(ngModel)]="editingGroupDescription"
+              placeholder="Enter group description"
+              rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="closeEditGroupDialog()">Cancel</button>
+          <button class="btn btn-primary" (click)="updateGroup()">Update Group</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Add User to Group Dialog -->
+  @if (showAddUserDialog() && selectedGroup()) {
+    <div class="modal-overlay" (click)="closeAddUserDialog()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Add User to {{ selectedGroup()!.name }}</h3>
+          <button class="btn-close" (click)="closeAddUserDialog()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="userSearch">Search User *</label>
+            <div class="search-input-wrapper">
+              <input
+                type="text"
+                id="userSearch"
+                class="form-control"
+                placeholder="Search by name, email, or identifiant (min 3 chars)..."
+                [value]="userSearchTerm()"
+                (input)="onUserSearch($event)"
+              />
+              @if (showUserSearchDropdown() && userSearchResults().length > 0) {
+                <div class="search-dropdown">
+                  @for (user of userSearchResults(); track user.id || user.identifiant) {
+                    <div class="dropdown-item" (click)="selectUserForGroup(user)">
+                      <div class="user-name">{{ user.fullName || user.identifiant }}</div>
+                      <div class="user-email">{{ user.email || '' }}</div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+            @if (selectedUserForGroup()) {
+              <div class="selected-user-badge">
+                <span>{{ selectedUserForGroup()!.fullName || selectedUserForGroup()!.identifiant }}</span>
+                <button class="btn-remove" (click)="clearSelectedUser()" type="button">✕</button>
+              </div>
+            }
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="closeAddUserDialog()">Cancel</button>
+          <button class="btn btn-primary" (click)="addUserToGroup()" [disabled]="!selectedUserForGroup()">Add User</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Delete Group Dialog -->
+  @if (showDeleteGroupDialog() && pendingDeleteGroup()) {
+    <div class="modal-overlay" (click)="closeDeleteGroupDialog()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Delete Group</h3>
+          <button class="btn-close" (click)="closeDeleteGroupDialog()">✕</button>
+        </div>
+        <div class="modal-body">
+          <p class="confirm-message">
+            Are you sure you want to delete group
+            <strong>{{ pendingDeleteGroup()!.name }}</strong>?
+          </p>
+          <p class="confirm-hint">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="closeDeleteGroupDialog()">Cancel</button>
+          <button class="btn btn-danger" (click)="confirmDeleteGroup()">Delete Group</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Remove Group Member Dialog -->
+  @if (showRemoveMemberDialog() && pendingRemoveGroup() && pendingRemoveMember()) {
+    <div class="modal-overlay" (click)="closeRemoveMemberDialog()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Remove User From Group</h3>
+          <button class="btn-close" (click)="closeRemoveMemberDialog()">✕</button>
+        </div>
+        <div class="modal-body">
+          <p class="confirm-message">
+            Remove
+            <strong>{{ pendingRemoveMember()!.fullName || pendingRemoveMember()!.identifiant }}</strong>
+            from
+            <strong>{{ pendingRemoveGroup()!.name }}</strong>?
+          </p>
+          <p class="confirm-hint">The user will lose this group access.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="closeRemoveMemberDialog()">Cancel</button>
+          <button class="btn btn-danger" (click)="confirmRemoveUserFromGroup()">Remove User</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

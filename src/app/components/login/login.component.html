@@ -1,0 +1,79 @@
+<div class="login-container">
+  <div class="login-box">
+    <h1 class="login-title">Login</h1>
+    
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <!-- Error Message -->
+      @if (error()) {
+        <div class="error-message">
+          {{ error() }}
+        </div>
+      }
+
+      <!-- Username Field -->
+      <div class="form-group">
+        <label for="identifiant" class="form-label">Identifiant</label>
+        <input
+          type="text"
+          id="identifiant"
+          formControlName="identifiant"
+          class="form-input"
+          [class.is-invalid]="submitted() && f['identifiant'].errors"
+          placeholder="Enter your identifiant"
+        />
+        @if (submitted() && f['identifiant'].errors) {
+          <div class="error-text">
+            @if (f['identifiant'].errors['required']) {
+              Identifiant is required
+            }
+            @if (f['identifiant'].errors['minlength']) {
+              Identifiant must be at least 3 characters
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          class="form-input"
+          [class.is-invalid]="submitted() && f['password'].errors"
+          placeholder="Enter your password"
+        />
+        @if (submitted() && f['password'].errors) {
+          <div class="error-text">
+            @if (f['password'].errors['required']) {
+              Password is required
+            }
+            @if (f['password'].errors['minlength']) {
+              Password must be at least 6 characters
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="loading()"
+      >
+        @if (loading()) {
+          <span class="spinner"></span>
+          Logging in...
+        } @else {
+          Login
+        }
+      </button>
+    </form>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      <p>Don't have an account? <a href="/register" class="link">Register here</a></p>
+    </div>
+  </div>
+</div>

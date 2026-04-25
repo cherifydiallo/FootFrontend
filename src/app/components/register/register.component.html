@@ -1,0 +1,148 @@
+<div class="register-container">
+  <div class="register-box">
+    <h1 class="register-title">Register</h1>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+      <!-- Error Message -->
+      @if (error()) {
+        <div class="error-message">
+          {{ error() }}
+        </div>
+      }
+
+      <!-- Success Message -->
+      @if (success()) {
+        <div class="success-message">
+          {{ success() }}
+        </div>
+      }
+
+      <!-- Identifiant (Username) Field -->
+      <div class="form-group">
+        <label for="identifiant" class="form-label">Username</label>
+        <input
+          type="text"
+          id="identifiant"
+          formControlName="identifiant"
+          class="form-input"
+          [class.is-invalid]="submitted() && f['identifiant'].errors"
+          placeholder="Choose a username"
+        />
+        @if (submitted() && f['identifiant'].errors) {
+          <div class="error-text">
+            @if (f['identifiant'].errors['required']) {
+              Username is required
+            }
+            @if (f['identifiant'].errors['minlength']) {
+              Username must be at least 3 characters
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Full Name Field -->
+      <div class="form-group">
+        <label for="fullname" class="form-label">Full Name</label>
+        <input
+          type="text"
+          id="fullname"
+          formControlName="fullname"
+          class="form-input"
+          [class.is-invalid]="submitted() && f['fullname'].errors"
+          placeholder="Enter your full name"
+        />
+        @if (submitted() && f['fullname'].errors) {
+          <div class="error-text">
+            @if (f['fullname'].errors['required']) {
+              Full name is required
+            }
+            @if (f['fullname'].errors['minlength']) {
+              Full name must be at least 2 characters
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email" class="form-label">Email</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          class="form-input"
+          [class.is-invalid]="submitted() && f['email'].errors"
+          placeholder="Enter your email"
+        />
+        @if (submitted() && f['email'].errors) {
+          <div class="error-text">
+            @if (f['email'].errors['required']) {
+              Email is required
+            }
+            @if (f['email'].errors['email']) {
+              Please enter a valid email
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          class="form-input"
+          [class.is-invalid]="submitted() && f['password'].errors"
+          placeholder="Create a strong password"
+        />
+        @if (submitted() && f['password'].errors) {
+          <div class="error-text">
+            {{ getPasswordErrorMessage() }}
+          </div>
+        }
+        <div class="password-hint">
+          Password must contain: uppercase, lowercase, numbers (min 8 chars)
+        </div>
+      </div>
+
+      <!-- Confirm Password Field -->
+      <div class="form-group">
+        <label for="confirmPassword" class="form-label">Confirm Password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          formControlName="confirmPassword"
+          class="form-input"
+          [class.is-invalid]="submitted() && (f['confirmPassword'].errors || registerForm.hasError('passwordMismatch'))"
+          placeholder="Re-enter your password"
+        />
+        @if (submitted() && (f['confirmPassword'].errors || registerForm.hasError('passwordMismatch'))) {
+          <div class="error-text">
+            {{ getConfirmPasswordErrorMessage() }}
+          </div>
+        }
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="loading()"
+      >
+        @if (loading()) {
+          <span class="spinner"></span>
+          Registering...
+        } @else {
+          Register
+        }
+      </button>
+    </form>
+
+    <!-- Footer -->
+    <div class="register-footer">
+      <p>Already have an account? <a routerLink="/login" class="link">Login here</a></p>
+    </div>
+  </div>
+</div>

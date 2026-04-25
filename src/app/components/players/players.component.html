@@ -1,0 +1,161 @@
+<div class="page">
+  <h1>Players</h1>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (success()) {
+    <p class="success">{{ success() }}</p>
+  }
+
+  <section class="card">
+    <h2>{{ editingPlayer() ? 'Update Player' : 'Create Player' }}</h2>
+    <div class="grid">
+      <input placeholder="Full name" [ngModel]="form().fullName" (ngModelChange)="updateField('fullName', $event)">
+      <input type="date" [ngModel]="form().birthDate" (ngModelChange)="updateField('birthDate', $event)">
+      <input placeholder="Academy" [ngModel]="form().academy" (ngModelChange)="updateField('academy', $event)">
+      <input placeholder="Category" [ngModel]="form().category" (ngModelChange)="updateField('category', $event)">
+      <input placeholder="Register number" [ngModel]="form().registerNumber" (ngModelChange)="updateField('registerNumber', $event)">
+      <input type="number" placeholder="Height (cm)" [ngModel]="form().heightCm" (ngModelChange)="updateNumberField('heightCm', $event)">
+      <input type="number" placeholder="Weight (kg)" [ngModel]="form().weightKg" (ngModelChange)="updateNumberField('weightKg', $event)">
+      <input placeholder="Father name" [ngModel]="form().fatherName" (ngModelChange)="updateField('fatherName', $event)">
+      <input placeholder="Mother name" [ngModel]="form().motherName" (ngModelChange)="updateField('motherName', $event)">
+      <input placeholder="Photo" [ngModel]="form().photo" (ngModelChange)="updateField('photo', $event)">
+    </div>
+    <div class="actions">
+      @if ((editingPlayer() && can('player_edit')) || (!editingPlayer() && can('player_write'))) {
+        <button (click)="submit()">{{ editingPlayer() ? 'Update' : 'Create' }}</button>
+      }
+      <button class="secondary" (click)="resetForm()">Clear</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Search by Register Number</h2>
+    <div class="search-row">
+      <input placeholder="REG-2024-001" [ngModel]="registerSearch()" (ngModelChange)="registerSearch.set($event)">
+      <button (click)="onSearch()">Search</button>
+      <button class="secondary" (click)="registerSearch.set(''); loadPlayers()">Reset</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Get Player by ID</h2>
+    <div class="search-row">
+      <input type="number" placeholder="1" [ngModel]="idSearch()" (ngModelChange)="idSearch.set($event)">
+      <button (click)="searchById()">Find</button>
+      <button class="secondary" (click)="idSearch.set(''); loadPlayers()">Reset</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>All Players</h2>
+    @if (loading()) {
+      <p>Loading...</p>
+    } @else if (players().length === 0) {
+      <p>No players found.</p>
+    } @else {
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Register #</th>
+              <th>Category</th>
+              <th>Academy</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (player of players(); track player.id) {
+              <tr>
+                <td>{{ player.id }}</td>
+                <td>{{ player.fullName }}</td>
+                <td>{{ player.registerNumber }}</td>
+                <td>{{ player.category }}</td>
+                <td>{{ player.academy }}</td>
+                <td class="row-actions">
+                  <button class="small secondary" (click)="openViewer(player)">View</button>
+                  @if (can('player_edit')) {
+                    <button class="small" (click)="edit(player)">Edit</button>
+                  }
+                  @if (can('player_delete')) {
+                    <button class="small danger" (click)="remove(player)">Delete</button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>
+
+@if (showDeletePlayerDialog() && deletingPlayer()) {
+  <div class="modal-overlay" (click)="closeDeletePlayerDialog()">
+    <div class="modal-content delete-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Delete Player</h3>
+        <button class="close-modal" (click)="closeDeletePlayerDialog()">x</button>
+      </div>
+      <p class="delete-message">
+        Are you sure you want to delete
+        <strong>{{ deletingPlayer()!.fullName }}</strong>?
+      </p>
+      <p class="delete-hint">This action cannot be undone.</p>
+      <div class="actions modal-actions">
+        <button class="secondary" (click)="closeDeletePlayerDialog()">Cancel</button>
+        <button class="danger" (click)="confirmDeletePlayer()">Delete Player</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (viewedPlayer()) {
+  <div class="viewer-overlay" (click)="closeViewer()">
+    <div class="viewer-dialog" (click)="$event.stopPropagation()">
+      <button class="close-viewer" (click)="closeViewer()">×</button>
+
+      <article class="license-card">
+        <header class="license-header">
+          <span class="line"></span>
+          <h2>LICENCE OFFICIELLE SFAC</h2>
+          <span class="line"></span>
+        </header>
+
+        <section class="license-body">
+          <div class="photo-box">
+            @if (viewedPlayer()!.photo && !photoLoadError()) {
+              <img
+                [src]="getPhotoUrl(viewedPlayer()!)"
+                [alt]="viewedPlayer()!.fullName"
+                (error)="onPhotoError()"
+              >
+            } @else {
+              <div class="photo-fallback">{{ getInitials(viewedPlayer()!) }}</div>
+            }
+          </div>
+
+          <div class="license-info">
+            <div class="info-row"><strong>Nom et prénom :</strong> {{ viewedPlayer()!.fullName }}</div>
+            <div class="info-row"><strong>Date de naissance :</strong> {{ formatBirthDate(viewedPlayer()!.birthDate) }}</div>
+            <div class="info-row"><strong>Académie :</strong> {{ viewedPlayer()!.academy }}</div>
+            <div class="info-row"><strong>Catégorie :</strong> <span class="category">{{ viewedPlayer()!.category }}</span></div>
+            <div class="info-row"><strong>Numéro du registre :</strong> {{ viewedPlayer()!.registerNumber }}</div>
+            <div class="info-row"><strong>Taille :</strong> {{ formatHeightCm(viewedPlayer()!.heightCm) }} <strong>Poids :</strong> {{ viewedPlayer()!.weightKg }} kg</div>
+            <div class="info-row"><strong>Nom du père :</strong> {{ viewedPlayer()!.fatherName }}</div>
+            <div class="info-row"><strong>Nom de la mère :</strong> {{ viewedPlayer()!.motherName }}</div>
+          </div>
+        </section>
+
+        <footer class="license-footer">
+          <div>SFAC - Tournoi 2026</div>
+          <div class="authorized">Joueur autorisé</div>
+        </footer>
+      </article>
+    </div>
+  </div>
+}

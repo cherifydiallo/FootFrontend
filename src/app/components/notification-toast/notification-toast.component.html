@@ -1,0 +1,6 @@
+@if (isVisible() && notification()) {
+  <div class="toast" [class.success]="notification()!.type === 'success'" [class.error]="notification()!.type === 'error'" [class.info]="notification()!.type === 'info'">
+    <div class="spinner" aria-hidden="true"></div>
+    <span>{{ notification()!.message }}</span>
+  </div>
+}

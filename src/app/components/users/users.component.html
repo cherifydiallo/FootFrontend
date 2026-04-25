@@ -1,0 +1,140 @@
+<div class="page">
+  <h1>Users Management</h1>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (success()) {
+    <p class="success">{{ success() }}</p>
+  }
+
+  <section class="card">
+    <h2>Search User by Username</h2>
+    <div class="actions">
+      <input placeholder="johndoe" [ngModel]="searchUsername()" (ngModelChange)="searchUsername.set($event)">
+      <button (click)="search()">Search</button>
+      <button class="secondary" (click)="searchUsername.set(''); loadUsers()">Reset</button>
+    </div>
+  </section>
+
+  @if (selected() && can('user_edit')) {
+    <section class="card">
+      <h2>Update User #{{ selected()!.id }}</h2>
+      <div class="grid">
+        <input placeholder="Fullname" [ngModel]="editFullname()" (ngModelChange)="editFullname.set($event)">
+        <input placeholder="Email" [ngModel]="editEmail()" (ngModelChange)="editEmail.set($event)">
+        <input placeholder="Password (optional)" [ngModel]="editPassword()" (ngModelChange)="editPassword.set($event)">
+        <select [ngModel]="editRole()" (ngModelChange)="editRole.set($event)">
+          <option value="standard">standard</option>
+          <option value="admin">admin</option>
+        </select>
+      </div>
+      <div class="actions">
+        <button (click)="save()">Save</button>
+        <button class="secondary" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </section>
+  }
+
+  <section class="card">
+    <div class="section-header">
+      <h2>All Users</h2>
+      @if (can('user_write')) {
+        <button class="create-btn" (click)="openCreateUserDialog()">Create User</button>
+      }
+    </div>
+    @if (loading()) {
+      <p>Loading...</p>
+    } @else if (users().length === 0) {
+      <p>No users found.</p>
+    } @else {
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Identifiant</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of users(); track user.id) {
+              <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.identifiant || user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <td class="actions">
+                  @if (can('user_edit')) {
+                    <button class="small" (click)="startEdit(user)">Edit</button>
+                  }
+                  @if (can('user_delete')) {
+                    <button
+                      class="small danger"
+                      [disabled]="isAdminUser(user)"
+                      [title]="isAdminUser(user) ? 'Admin users cannot be deleted' : 'Delete user'"
+                      (click)="remove(user)">
+                      Delete
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+
+  @if (showCreateUserDialog() && can('user_write')) {
+    <div class="modal-overlay" (click)="closeCreateUserDialog()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Create New User</h3>
+          <button class="close-btn" (click)="closeCreateUserDialog()">x</button>
+        </div>
+
+        <div class="grid create-user-form">
+          <input placeholder="Identifiant" [ngModel]="createIdentifiant()" (ngModelChange)="createIdentifiant.set($event)">
+          <input placeholder="Fullname" [ngModel]="createFullname()" (ngModelChange)="createFullname.set($event)">
+          <input type="email" placeholder="Email" [ngModel]="createEmail()" (ngModelChange)="createEmail.set($event)">
+          <input type="password" placeholder="Password" [ngModel]="createPassword()" (ngModelChange)="createPassword.set($event)">
+          <select [ngModel]="createRole()" (ngModelChange)="createRole.set($event)">
+            <option value="standard">standard</option>
+            <option value="admin">admin</option>
+          </select>
+        </div>
+
+        <div class="actions">
+          <button (click)="createUser()">Create</button>
+          <button class="secondary" (click)="closeCreateUserDialog()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (showDeleteUserDialog() && deletingUser()) {
+    <div class="modal-overlay" (click)="closeDeleteUserDialog()">
+      <div class="modal-content delete-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Confirm User Deletion</h3>
+          <button class="close-btn" (click)="closeDeleteUserDialog()">x</button>
+        </div>
+
+        <p class="delete-message">
+          Are you sure you want to delete
+          <strong>{{ deletingUser()!.identifiant || deletingUser()!.username || 'this user' }}</strong>?
+        </p>
+        <p class="delete-hint">This action cannot be undone.</p>
+
+        <div class="actions modal-actions">
+          <button class="secondary" (click)="closeDeleteUserDialog()">Cancel</button>
+          <button class="danger" (click)="confirmDeleteUser()">Delete User</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
