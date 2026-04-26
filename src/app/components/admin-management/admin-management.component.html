@@ -187,45 +187,62 @@
           <p class="permissions-help">
             Configure backend permission parameters per group. These keys map directly to /groups/:groupId/permissions.
           </p>
+          <div class="permissions-notice">
+            Admin groups are protected. Their permissions are visible but cannot be edited here.
+          </div>
 
           @if (groups().length === 0) {
             <div class="empty-state">
               <p>No groups found. Create groups first, then configure permissions.</p>
             </div>
           } @else {
-            <div class="permissions-table-wrap">
-              <table class="permissions-table">
-                <thead>
-                  <tr>
-                    <th>Group</th>
-                    @for (action of availableActions; track action.key) {
-                      <th [title]="action.description">
-                        <div class="permission-label">{{ action.label }}</div>
-                        <div class="permission-key">{{ action.key }}</div>
-                      </th>
-                    }
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (group of groups(); track group.id) {
-                    <tr>
-                      <td class="group-col">{{ group.name }}</td>
-                      @for (action of availableActions; track action.key) {
-                        <td>
-                          <input
-                            type="checkbox"
-                            [checked]="hasGroupAction(group.id, action.key)"
-                            (change)="toggleGroupAction(group.id, action.key, $any($event.target).checked)"
-                            [disabled]="!can('group_permission_manage')"
-                            [attr.aria-label]="group.name + ' - ' + action.label"
-                          >
-                        </td>
+            @for (permissionGroup of permissionActionGroups; track permissionGroup.key) {
+              <section class="permission-group-block">
+                <h3>{{ permissionGroup.label }} Permissions</h3>
+                <div class="permissions-table-wrap">
+                  <table class="permissions-table">
+                    <thead>
+                      <tr>
+                        <th>Group</th>
+                        @for (action of permissionGroup.actions; track action.key) {
+                          <th [title]="action.description">
+                            <div class="permission-label">{{ action.label }}</div>
+                            <div class="permission-key">{{ action.key }}</div>
+                          </th>
+                        }
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (group of groups(); track group.id) {
+                        <tr [class.admin-protected-row]="isAdminGroup(group)">
+                          <td class="group-col">
+                            <div class="group-cell">
+                              <div class="group-name">{{ group.name }}</div>
+                              <div class="group-meta">Group #{{ group.id }}</div>
+                            </div>
+                            @if (isAdminGroup(group)) {
+                              <span class="admin-protected-badge">Protected Admin</span>
+                            }
+                          </td>
+                          @for (action of permissionGroup.actions; track action.key) {
+                            <td>
+                              <input
+                                type="checkbox"
+                                [checked]="hasGroupAction(group.id, action.key)"
+                                (change)="toggleGroupAction(group.id, action.key, $any($event.target).checked)"
+                                [disabled]="!canEditGroupPermissions(group)"
+                                [title]="isAdminGroup(group) ? 'Admin group permissions are protected' : ''"
+                                [attr.aria-label]="group.name + ' - ' + action.label"
+                              >
+                            </td>
+                          }
+                        </tr>
                       }
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            }
           }
         </div>
       }

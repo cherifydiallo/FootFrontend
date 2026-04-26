@@ -1,0 +1,242 @@
+<div class="page">
+  <div class="header-row">
+    <button class="secondary" (click)="goBack()">Back</button>
+    <h1>Academies Management</h1>
+  </div>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (success()) {
+    <p class="success">{{ success() }}</p>
+  }
+
+  <section class="card">
+    <h2>Get Academy by ID</h2>
+    <div class="search-row">
+      <input type="number" placeholder="1" [ngModel]="idSearch()" (ngModelChange)="idSearch.set($event)">
+      <button (click)="searchById()">Find</button>
+      <button class="secondary" (click)="idSearch.set(''); loadAcademies()">Reset</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-header">
+      <h2>All Academies</h2>
+      <div class="section-actions">
+        @if (canCreate()) {
+          <button (click)="openCreateAcademyDialog()">Create Academy</button>
+        }
+        <button class="secondary" (click)="loadAcademies()">Refresh</button>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <p>Loading...</p>
+    } @else if (academies().length === 0) {
+      <p>No academies found.</p>
+    } @else {
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Localite</th>
+              <th>Phone</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (academy of academies(); track academy.id) {
+              <tr>
+                <td>{{ academy.id }}</td>
+                <td>{{ academy.academyName }}</td>
+                <td>{{ academy.localite || '-' }}</td>
+                <td>{{ academy.numeroTelephone || '-' }}</td>
+                <td>{{ academy.description || '-' }}</td>
+                <td class="row-actions">
+                  @if (canEdit()) {
+                    <button class="small" (click)="openEditAcademyDialog(academy)">Edit</button>
+                  }
+                  @if (canDelete()) {
+                    <button class="small danger" (click)="openDeleteAcademyDialog(academy)">Delete</button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+
+  <section class="card">
+    <div class="section-header">
+      <h2>Academy Categories</h2>
+      <button class="secondary" (click)="loadCategories()" [disabled]="!selectedAcademyId()">Refresh Categories</button>
+    </div>
+
+    <div class="category-controls">
+      <select [ngModel]="selectedAcademyId() ?? ''" (ngModelChange)="onAcademySelectForCategories($event)">
+        <option value="">Select academy</option>
+        @for (academy of academies(); track academy.id) {
+          <option [value]="academy.id">{{ academy.academyName }}</option>
+        }
+      </select>
+
+      @if (canCreate()) {
+        <input
+          placeholder="New category name (ex: U17)"
+          [ngModel]="newCategoryName()"
+          (ngModelChange)="newCategoryName.set($event)"
+          [disabled]="!selectedAcademyId()"
+        >
+        <button (click)="createCategory()" [disabled]="!selectedAcademyId()">Add Category</button>
+      }
+    </div>
+
+    @if (!selectedAcademyId()) {
+      <p>Select an academy to see its categories.</p>
+    } @else if (loadingCategories()) {
+      <p>Loading categories...</p>
+    } @else if (categories().length === 0) {
+      <p>No categories found for this academy.</p>
+    } @else {
+      <div class="category-list">
+        @for (category of categories(); track category.id) {
+          <span class="category-chip removable-chip">
+            {{ category.name }}
+            @if (canCreate()) {
+              <button
+                type="button"
+                class="chip-remove"
+                (click)="deleteCategory(category.id)"
+                aria-label="Delete category"
+              >×</button>
+            }
+          </span>
+        }
+      </div>
+    }
+  </section>
+</div>
+
+@if (showCreateAcademyDialog() && canCreate()) {
+  <div class="modal-overlay" (click)="closeCreateAcademyDialog()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Create New Academy</h3>
+        <button class="close-modal" (click)="closeCreateAcademyDialog()">×</button>
+      </div>
+      <div class="grid">
+        <input
+          placeholder="Academy name"
+          [ngModel]="form().academyName"
+          (ngModelChange)="updateField('academyName', $event)"
+        >
+        <input
+          placeholder="Localite"
+          [ngModel]="form().localite"
+          (ngModelChange)="updateField('localite', $event)"
+        >
+        <input
+          placeholder="Phone number"
+          [ngModel]="form().numeroTelephone"
+          (ngModelChange)="updateField('numeroTelephone', $event)"
+        >
+        <input
+          placeholder="Description"
+          [ngModel]="form().description"
+          (ngModelChange)="updateField('description', $event)"
+        >
+      </div>
+      <div class="create-categories-box">
+        <label>Categories For This Academy</label>
+        <div class="create-categories-row">
+          <input
+            placeholder="Category name (ex: U17)"
+            [ngModel]="createCategoryInput()"
+            (ngModelChange)="createCategoryInput.set($event)"
+          >
+          <button type="button" class="secondary" (click)="addCreateCategoryToList()">Add</button>
+        </div>
+        @if (createCategoryList().length === 0) {
+          <p class="hint">No categories yet. Add one or more categories before create if needed.</p>
+        } @else {
+          <div class="category-list">
+            @for (categoryName of createCategoryList(); track categoryName) {
+              <span class="category-chip removable-chip">
+                {{ categoryName }}
+                <button type="button" class="chip-remove" (click)="removeCreateCategoryFromList(categoryName)">×</button>
+              </span>
+            }
+          </div>
+        }
+      </div>
+      <div class="actions">
+        <button (click)="createAcademy()">Create</button>
+        <button class="secondary" (click)="closeCreateAcademyDialog()">Cancel</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (showEditAcademyDialog() && canEdit()) {
+  <div class="modal-overlay" (click)="closeEditAcademyDialog()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Update Academy</h3>
+        <button class="close-modal" (click)="closeEditAcademyDialog()">×</button>
+      </div>
+      <div class="grid">
+        <input
+          placeholder="Academy name"
+          [ngModel]="form().academyName"
+          (ngModelChange)="updateField('academyName', $event)"
+        >
+        <input
+          placeholder="Localite"
+          [ngModel]="form().localite"
+          (ngModelChange)="updateField('localite', $event)"
+        >
+        <input
+          placeholder="Phone number"
+          [ngModel]="form().numeroTelephone"
+          (ngModelChange)="updateField('numeroTelephone', $event)"
+        >
+        <input
+          placeholder="Description"
+          [ngModel]="form().description"
+          (ngModelChange)="updateField('description', $event)"
+        >
+      </div>
+      <div class="actions">
+        <button (click)="updateAcademy()">Save</button>
+        <button class="secondary" (click)="closeEditAcademyDialog()">Cancel</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (showDeleteAcademyDialog() && deletingAcademy() && canDelete()) {
+  <div class="modal-overlay" (click)="closeDeleteAcademyDialog()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Delete Academy</h3>
+        <button class="close-modal" (click)="closeDeleteAcademyDialog()">×</button>
+      </div>
+      <p class="delete-message">
+        Are you sure you want to delete
+        <strong>{{ deletingAcademy()!.academyName }}</strong>?
+      </p>
+      <p class="delete-hint">This action cannot be undone.</p>
+      <div class="actions">
+        <button class="secondary" (click)="closeDeleteAcademyDialog()">Cancel</button>
+        <button class="danger" (click)="deleteAcademy()">Delete Academy</button>
+      </div>
+    </div>
+  </div>
+}

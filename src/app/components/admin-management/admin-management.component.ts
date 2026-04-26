@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { GroupService, Group, CreateGroupDto, User, GroupPermissionRow } from '../../services/group.service';
+import { GroupService, Group, CreateGroupDto, User, GroupPermissionRow, FeatureAction } from '../../services/group.service';
 import { AuthService } from '../../services/auth.service';
 import { Subscription, forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -11,6 +11,12 @@ import { NotificationService } from '../../services/notification.service';
 
 interface GroupWithMembers extends Group {
   members?: User[];
+}
+
+interface PermissionActionGroup {
+  key: string;
+  label: string;
+  actions: FeatureAction[];
 }
 
 @Component({
@@ -54,6 +60,7 @@ export class AdminManagementComponent implements OnInit, OnDestroy {
   selectedUserForGroup = signal<User | null>(null);
 
   availableActions = FEATURE_ACTIONS;
+  permissionActionGroups = this.buildPermissionActionGroups(this.availableActions);
   permissionMap = signal<Record<number, Record<string, boolean>>>({});
   savingPermissions = signal(false);
   currentUser = signal<any>(null);
@@ -505,6 +512,11 @@ export class AdminManagementComponent implements OnInit, OnDestroy {
   }
 
   toggleGroupAction(groupId: number, actionKey: string, checked: boolean): void {
+    const group = this.groups().find((entry) => entry.id === groupId);
+    if (!group || !this.canEditGroupPermissions(group)) {
+      return;
+    }
+
     this.permissionMap.update((currentMap) => {
       const nextMap: Record<number, Record<string, boolean>> = { ...currentMap };
       nextMap[groupId] = { ...(nextMap[groupId] || {}) };
@@ -524,6 +536,11 @@ export class AdminManagementComponent implements OnInit, OnDestroy {
 
     const rows = this.featureAccessService.toPermissionRows(this.groups(), this.permissionMap());
     const requests = rows.flatMap((row) => {
+      const group = this.groups().find((entry) => entry.id === row.groupId);
+      if (!group || !this.canEditGroupPermissions(group)) {
+        return [];
+      }
+
       const enabled = new Set(row.actions || []);
 
       return this.availableActions.map((action) => {
@@ -575,5 +592,56 @@ export class AdminManagementComponent implements OnInit, OnDestroy {
 
   canAny(actionKeys: string[]): boolean {
     return actionKeys.some((key) => this.can(key));
+  }
+
+  isAdminGroup(group: Group): boolean {
+    const name = String(group?.name || '').trim().toLowerCase();
+    return name.includes('admin');
+  }
+
+  canEditGroupPermissions(group: Group): boolean {
+    return this.can('group_permission_manage') && !this.isAdminGroup(group);
+  }
+
+  private buildPermissionActionGroups(actions: FeatureAction[]): PermissionActionGroup[] {
+    const grouped = new Map<string, FeatureAction[]>();
+
+    for (const action of actions) {
+      const domain = this.extractPermissionDomain(action.key);
+      const list = grouped.get(domain) || [];
+      list.push(action);
+      grouped.set(domain, list);
+    }
+
+    return Array.from(grouped.entries())
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, groupedActions]) => ({
+        key,
+        label: this.formatPermissionDomainLabel(key),
+        actions: groupedActions
+      }));
+  }
+
+  private extractPermissionDomain(permissionKey: string): string {
+    const [domain] = String(permissionKey || '').split('_');
+    return domain || 'general';
+  }
+
+  private formatPermissionDomainLabel(domain: string): string {
+    const labels: Record<string, string> = {
+      academy: 'Academies',
+      category: 'Categories',
+      group: 'Groups',
+      player: 'Players',
+      profile: 'Profile',
+      user: 'Users',
+      general: 'General'
+    };
+
+    if (labels[domain]) {
+      return labels[domain];
+    }
+
+    return domain.charAt(0).toUpperCase() + domain.slice(1);
   }
 }

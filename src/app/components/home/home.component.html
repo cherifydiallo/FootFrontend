@@ -35,6 +35,9 @@
       @if (can('player_read')) {
         <button class="btn btn-primary" (click)="goTo('/home/players')">Players</button>
       }
+      @if (canAny(['academy_read', 'academy_write', 'academy_edit', 'academy_delete'])) {
+        <button class="btn btn-primary" (click)="goTo('/home/academies')">Academies</button>
+      }
       <button class="btn btn-primary" (click)="goTo('/home/profile')">My Profile</button>
       @if (can('user_read')) {
         <button class="btn btn-primary" (click)="goTo('/home/users')">Users</button>

@@ -64,8 +64,13 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/home']);
       },
       error: (error) => {
-        this.error.set(error?.error?.message || 'Login failed. Please try again.');
         this.loading.set(false);
+        if (error?.accessDenied) {
+          this.authService.logout();
+          this.error.set('Access denied. Please contact your administrator.');
+        } else {
+          this.error.set(error?.error?.message || 'Login failed. Please try again.');
+        }
       }
     });
   }

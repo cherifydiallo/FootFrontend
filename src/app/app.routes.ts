@@ -8,6 +8,7 @@ import { AuthGuardService } from './guards/auth.guard';
 import { AdminManagementComponent } from './components/admin-management/admin-management.component';
 import { PlayersComponent } from './components/players/players.component';
 import { UsersComponent } from './components/users/users.component';
+import { AcademiesComponent } from './components/academies/academies.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -20,6 +21,7 @@ export const routes: Routes = [
     children: [
       { path: '', component: HomeComponent },
       { path: 'groups', component: AdminManagementComponent },
+      { path: 'academies', component: AcademiesComponent },
       { path: 'players', component: PlayersComponent },
       { path: 'users', component: UsersComponent },
       { path: 'profile', component: ProfileComponent },

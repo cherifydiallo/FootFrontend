@@ -6,6 +6,20 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { FeatureAccessService } from '../../services/feature-access.service';
 import { NotificationService } from '../../services/notification.service';
+import { Academy, AcademyCategory, AcademyService } from '../../services/academy.service';
+
+interface PlayerFormState {
+  fullName: string;
+  birthDate: string;
+  academyId: number | null;
+  categoryId: number | null;
+  registerNumber: string;
+  heightCm: number;
+  weightKg: number;
+  fatherName: string;
+  motherName: string;
+  photo: string;
+}
 
 @Component({
   selector: 'app-players',
@@ -21,17 +35,22 @@ export class PlayersComponent implements OnInit {
   success = signal<string | null>(null);
   showDeletePlayerDialog = signal(false);
   deletingPlayer = signal<Player | null>(null);
+  showCreatePlayerDialog = signal(false);
   registerSearch = signal('');
   idSearch = signal('');
   editingPlayer = signal<Player | null>(null);
   viewedPlayer = signal<Player | null>(null);
   photoLoadError = signal(false);
+  academies = signal<Academy[]>([]);
+  categories = signal<AcademyCategory[]>([]);
+  loadingAcademies = signal(false);
+  loadingCategories = signal(false);
 
-  form = signal<PlayerPayload>({
+  form = signal<PlayerFormState>({
     fullName: '',
     birthDate: '',
-    academy: '',
-    category: '',
+    academyId: null,
+    categoryId: null,
     registerNumber: '',
     heightCm: 0,
     weightKg: 0,
@@ -42,13 +61,14 @@ export class PlayersComponent implements OnInit {
 
   constructor(
     private playerService: PlayerService,
+    private academyService: AcademyService,
     private authService: AuthService,
     private router: Router,
     private featureAccessService: FeatureAccessService,
     private notificationService: NotificationService
   ) {}
 
-  updateField<K extends keyof PlayerPayload>(field: K, value: PlayerPayload[K]): void {
+  updateField<K extends keyof PlayerFormState>(field: K, value: PlayerFormState[K]): void {
     this.form.update((current) => ({ ...current, [field]: value }));
   }
 
@@ -64,6 +84,7 @@ export class PlayersComponent implements OnInit {
     }
 
     this.loadPlayers();
+    this.loadAcademies();
   }
 
   can(actionKey: string): boolean {
@@ -71,10 +92,13 @@ export class PlayersComponent implements OnInit {
   }
 
   loadPlayers(): void {
+    this.error.set(null);
     this.loading.set(true);
     this.playerService.getAllPlayers().subscribe({
       next: (response) => {
-        this.players.set(response?.players || response || []);
+        const list = response?.players || response || [];
+        this.players.set(this.normalizePlayers(list));
+        this.error.set(null);
         this.loading.set(false);
       },
       error: () => {
@@ -84,7 +108,69 @@ export class PlayersComponent implements OnInit {
     });
   }
 
+  loadAcademies(): void {
+    this.loadingAcademies.set(true);
+    this.academyService.getAllAcademies().subscribe({
+      next: (response) => {
+        const academies = response?.academies || response || [];
+        this.academies.set(Array.isArray(academies) ? academies : []);
+        this.loadingAcademies.set(false);
+      },
+      error: () => {
+        this.loadingAcademies.set(false);
+        this.error.set('Failed to load academies');
+      }
+    });
+  }
+
+  loadCategories(academyId: number, preferredCategoryId?: number): void {
+    this.loadingCategories.set(true);
+    this.categories.set([]);
+
+    this.academyService.getCategoriesByAcademy(academyId).subscribe({
+      next: (response) => {
+        const categories = response?.categories || response || [];
+        const parsed = Array.isArray(categories) ? categories : [];
+        this.categories.set(parsed);
+
+        const categoryStillValid = parsed.some((item) => item.id === preferredCategoryId);
+        this.form.update((current) => ({
+          ...current,
+          categoryId: categoryStillValid ? preferredCategoryId ?? null : null
+        }));
+
+        this.loadingCategories.set(false);
+      },
+      error: () => {
+        this.loadingCategories.set(false);
+        this.categories.set([]);
+        this.error.set('Failed to load categories for this academy');
+      }
+    });
+  }
+
+  onAcademyChange(value: string | number): void {
+    const academyId = Number(value);
+    if (!academyId || Number.isNaN(academyId)) {
+      this.form.update((current) => ({ ...current, academyId: null, categoryId: null }));
+      this.categories.set([]);
+      return;
+    }
+
+    this.form.update((current) => ({ ...current, academyId, categoryId: null }));
+    this.loadCategories(academyId);
+  }
+
+  onCategoryChange(value: string | number): void {
+    const categoryId = Number(value);
+    this.form.update((current) => ({
+      ...current,
+      categoryId: !categoryId || Number.isNaN(categoryId) ? null : categoryId
+    }));
+  }
+
   onSearch(): void {
+    this.error.set(null);
     const value = this.registerSearch().trim();
     if (!value) {
       this.loadPlayers();
@@ -94,8 +180,9 @@ export class PlayersComponent implements OnInit {
     this.loading.set(true);
     this.playerService.searchByRegisterNumber(value).subscribe({
       next: (response) => {
-        const player = response?.player || response;
+        const player = this.normalizePlayer(response?.player || response);
         this.players.set(player ? [player] : []);
+        this.error.set(null);
         this.loading.set(false);
       },
       error: () => {
@@ -117,8 +204,9 @@ export class PlayersComponent implements OnInit {
     this.loading.set(true);
     this.playerService.getPlayerById(id).subscribe({
       next: (response) => {
-        const player = response?.player || response;
+        const player = this.normalizePlayer(response?.player || response);
         this.players.set(player ? [player] : []);
+        this.error.set(null);
         this.loading.set(false);
       },
       error: () => {
@@ -130,12 +218,15 @@ export class PlayersComponent implements OnInit {
   }
 
   edit(player: Player): void {
+    const academyId = Number(player.academyId) || null;
+    const categoryId = Number(player.categoryId) || null;
+
     this.editingPlayer.set(player);
     this.form.set({
       fullName: player.fullName,
       birthDate: player.birthDate,
-      academy: player.academy,
-      category: player.category,
+      academyId,
+      categoryId,
       registerNumber: player.registerNumber,
       heightCm: player.heightCm,
       weightKg: player.weightKg,
@@ -143,6 +234,12 @@ export class PlayersComponent implements OnInit {
       motherName: player.motherName,
       photo: player.photo || ''
     });
+
+    if (academyId) {
+      this.loadCategories(academyId, categoryId || undefined);
+    } else {
+      this.categories.set([]);
+    }
   }
 
   resetForm(): void {
@@ -152,8 +249,8 @@ export class PlayersComponent implements OnInit {
     this.form.set({
       fullName: '',
       birthDate: '',
-      academy: '',
-      category: '',
+      academyId: null,
+      categoryId: null,
       registerNumber: '',
       heightCm: 0,
       weightKg: 0,
@@ -161,6 +258,7 @@ export class PlayersComponent implements OnInit {
       motherName: '',
       photo: ''
     });
+    this.categories.set([]);
   }
 
   submit(): void {
@@ -177,11 +275,29 @@ export class PlayersComponent implements OnInit {
     this.error.set(null);
     this.success.set(null);
 
-    const payload = this.form();
-    if (!payload.fullName || !payload.registerNumber) {
+    const form = this.form();
+    if (!form.fullName || !form.registerNumber) {
       this.error.set('Full name and register number are required');
       return;
     }
+
+    if (!form.academyId || !form.categoryId) {
+      this.error.set('Academy and category are required');
+      return;
+    }
+
+    const payload: PlayerPayload = {
+      fullName: form.fullName,
+      birthDate: form.birthDate,
+      academyId: form.academyId,
+      categoryId: form.categoryId,
+      registerNumber: form.registerNumber,
+      heightCm: form.heightCm,
+      weightKg: form.weightKg,
+      fatherName: form.fatherName,
+      motherName: form.motherName,
+      photo: form.photo?.trim() ? form.photo : null
+    };
 
     const editing = this.editingPlayer();
     if (editing) {
@@ -201,11 +317,22 @@ export class PlayersComponent implements OnInit {
       next: () => {
         this.success.set('Player created successfully');
         this.notificationService.showSuccess('Player created successfully');
-        this.resetForm();
+        this.closeCreatePlayerDialog();
         this.loadPlayers();
       },
       error: () => this.error.set('Failed to create player')
     });
+  }
+
+  openCreatePlayerDialog(): void {
+    this.resetForm();
+    this.loadAcademies();
+    this.showCreatePlayerDialog.set(true);
+  }
+
+  closeCreatePlayerDialog(): void {
+    this.showCreatePlayerDialog.set(false);
+    this.resetForm();
   }
 
   remove(player: Player): void {
@@ -260,6 +387,20 @@ export class PlayersComponent implements OnInit {
     this.photoLoadError.set(true);
   }
 
+  onPhotoFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input?.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.updateField('photo', reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  }
+
   getPhotoUrl(player: Player): string {
     return player.photo || '';
   }
@@ -298,5 +439,79 @@ export class PlayersComponent implements OnInit {
     const meters = Math.floor(heightCm / 100);
     const centimeters = heightCm % 100;
     return `${meters}m${String(centimeters).padStart(2, '0')}`;
+  }
+
+  isPlayerProfileComplete(player: Player): boolean {
+    return this.hasValue(player.fullName)
+      && this.hasValue(player.birthDate)
+      && this.hasValue(player.academy)
+      && this.hasValue(player.category)
+      && this.hasValue(player.registerNumber)
+      && this.hasNumber(player.heightCm)
+      && this.hasNumber(player.weightKg)
+      && this.hasValue(player.fatherName)
+      && this.hasValue(player.motherName);
+  }
+
+  private hasValue(value: unknown): boolean {
+    if (typeof value !== 'string') {
+      return false;
+    }
+
+    const normalized = value.trim();
+    return !!normalized && normalized !== '-';
+  }
+
+  private hasNumber(value: unknown): boolean {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) && parsed > 0;
+  }
+
+  private normalizePlayers(list: any): Player[] {
+    if (!Array.isArray(list)) {
+      return [];
+    }
+
+    return list
+      .map((item) => this.normalizePlayer(item))
+      .filter((player): player is Player => !!player);
+  }
+
+  private normalizePlayer(raw: any): Player | null {
+    if (!raw || typeof raw !== 'object') {
+      return null;
+    }
+
+    const academyObject = raw.academy && typeof raw.academy === 'object' ? raw.academy : null;
+    const categoryObject = raw.category && typeof raw.category === 'object' ? raw.category : null;
+
+    return {
+      ...raw,
+      academyId: Number(raw.academyId ?? academyObject?.id) || undefined,
+      categoryId: Number(raw.categoryId ?? categoryObject?.id) || undefined,
+      academy: this.extractDisplayLabel(raw.academy, ['academyName', 'name', 'label']),
+      category: this.extractDisplayLabel(raw.category, ['name', 'categoryName', 'label'])
+    } as Player;
+  }
+
+  private extractDisplayLabel(value: unknown, preferredKeys: string[]): string {
+    if (typeof value === 'string') {
+      return value;
+    }
+
+    if (!value || typeof value !== 'object') {
+      return '-';
+    }
+
+    const record = value as Record<string, unknown>;
+    for (const key of preferredKeys) {
+      const candidate = record[key];
+      if (typeof candidate === 'string' && candidate.trim()) {
+        return candidate;
+      }
+    }
+
+    const fallback = Object.values(record).find((entry) => typeof entry === 'string' && entry.trim());
+    return typeof fallback === 'string' ? fallback : '-';
   }
 }

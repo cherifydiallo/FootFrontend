@@ -28,22 +28,23 @@ export class HomeComponent implements OnInit {
       return;
     }
 
-    // Get current user from storage (set during login)
+    // Show stored user immediately for instant render, then always refresh
+    // from /profile/me so permissions are always up to date
     const storedUser = this.authService.getCurrentUser();
     if (storedUser) {
       this.currentUser.set(storedUser);
       this.loading.set(false);
-    } else {
-      this.authService.fetchCurrentUser().subscribe({
-        next: (user) => {
-          this.currentUser.set(user);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.loading.set(false);
-        }
-      });
     }
+
+    this.authService.fetchCurrentUser().subscribe({
+      next: (user) => {
+        this.currentUser.set(user);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loading.set(false);
+      }
+    });
   }
 
   can(actionKey: string): boolean {

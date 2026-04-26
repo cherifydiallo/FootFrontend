@@ -5,9 +5,9 @@ import { isPlatformBrowser } from '@angular/common';
 // Import HTTP client and headers for making API requests
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 // Import RxJS observables for reactive data management
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 // Import map operator to transform observable data
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 // Import API URL from environment configuration
 import { environment } from '../../environments/environment';
 
@@ -53,15 +53,15 @@ export interface RegisterResponse {
 export class AuthService {
   // Base API URL for authentication endpoints from environment config
   private apiUrl = `${environment.backendUrl}/auth`;
-  
+
   // Platform ID injected to detect if running in browser or server
   private platformId = inject(PLATFORM_ID);
-  
+
   // BehaviorSubject to track the currently logged-in user (starts with stored user or null)
   private currentUserSubject = new BehaviorSubject<any>(this.getUserFromStorage());
   // Observable stream for components to subscribe to current user changes
   public currentUser$ = this.currentUserSubject.asObservable();
-  
+
   // BehaviorSubject to track authentication state (true if token exists, false otherwise)
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
   // Observable stream for components to check authentication status
@@ -79,12 +79,12 @@ export class AuthService {
           localStorage.setItem('authToken', response.token);
           localStorage.setItem('user', JSON.stringify(response.user));
         }
-        
+
         // Update the user subject so all subscribed components receive the update
         this.currentUserSubject.next(response.user);
         // Update authentication status to true
         this.isAuthenticatedSubject.next(true);
-        
+
         return response;
       })
     );
@@ -93,24 +93,29 @@ export class AuthService {
   // Fetch current user info from backend endpoint /api/profile/me
   fetchCurrentUser(): Observable<any> {
     return this.http.get<any>(`${environment.backendUrl}/profile/me`).pipe(
-      map((response) => {
+      switchMap((response) => {
+        // Backend returned Access Denied (user lacks profile_view permission)
+        if (response.error === 'Access Denied') {
+          return throwError(() => ({ accessDenied: true }));
+        }
+
         // Handle the wrapped response format { success: true, user: {...} }
         if (response.success && response.user) {
           const user = response.user;
-          
+
           // Store user in localStorage and update subject
           if (isPlatformBrowser(this.platformId)) {
             localStorage.setItem('user', JSON.stringify(user));
           }
           this.currentUserSubject.next(user);
-          return user;
+          return of(user);
         } else {
           // If response doesn't have success flag, treat response as user data directly
           if (isPlatformBrowser(this.platformId)) {
             localStorage.setItem('user', JSON.stringify(response));
           }
           this.currentUserSubject.next(response);
-          return response;
+          return of(response);
         }
       })
     );
@@ -203,12 +208,12 @@ export class AuthService {
   searchUsers(username: string): Observable<any[]> {
     const token = this.getToken();
     let headers = new HttpHeaders();
-    
+
     // Add authorization header if token exists
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
     }
-    
+
     return this.http.get<any>(`${environment.backendUrl}/auth/user/search`, {
       params: { username },
       headers: headers

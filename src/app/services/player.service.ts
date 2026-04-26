@@ -7,17 +7,30 @@ export interface Player {
   id: number;
   fullName: string;
   birthDate: string;
-  academy: string;
-  category: string;
+  academyId?: number;
+  categoryId?: number;
+  academy?: string;
+  category?: string;
   registerNumber: string;
   heightCm: number;
   weightKg: number;
   fatherName: string;
   motherName: string;
-  photo?: string;
+  photo?: string | null;
 }
 
-export type PlayerPayload = Omit<Player, 'id'>;
+export interface PlayerPayload {
+  fullName: string;
+  birthDate: string;
+  academyId: number;
+  categoryId: number;
+  registerNumber: string;
+  heightCm: number;
+  weightKg: number;
+  fatherName: string;
+  motherName: string;
+  photo?: string | null;
+}
 
 @Injectable({
   providedIn: 'root'

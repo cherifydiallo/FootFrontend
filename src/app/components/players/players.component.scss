@@ -28,6 +28,19 @@ input {
   padding: 10px;
 }
 
+select {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+}
+
+select:disabled {
+  background: #f3f4f6;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
 .actions,
 .search-row,
 .row-actions {
@@ -64,6 +77,75 @@ button.small {
 
 .success {
   color: #047857;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.section-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.create-btn {
+  background: #1d4ed8;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: #1e40af;
+  }
+}
+
+.create-form {
+  margin-bottom: 12px;
+}
+
+.photo-upload-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.photo-upload-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  min-width: 90px;
+}
+
+.photo-file-input {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  flex: 1;
+  min-width: 0;
+}
+
+.photo-preview {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #d1d5db;
+  flex-shrink: 0;
 }
 
 .table-wrap {
@@ -272,7 +354,21 @@ td {
 }
 
 .authorized {
-  color: #166534;
+  color: #92400e;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  input[type='checkbox'] {
+    width: 28px;
+    height: 28px;
+    accent-color: #15803d;
+    cursor: not-allowed;
+  }
+
+  &.complete {
+    color: #166534;
+  }
 }
 
 @media (max-width: 1024px) {

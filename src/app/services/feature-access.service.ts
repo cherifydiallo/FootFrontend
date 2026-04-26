@@ -17,6 +17,10 @@ export const FEATURE_ACTIONS: FeatureAction[] = [
   { key: 'player_write', label: 'Create Player', description: 'Create players' },
   { key: 'player_edit', label: 'Edit Player', description: 'Update players' },
   { key: 'player_delete', label: 'Delete Player', description: 'Delete players' },
+  { key: 'academy_read', label: 'View Academies', description: 'Read academies' },
+  { key: 'academy_write', label: 'Create Academy', description: 'Create academies' },
+  { key: 'academy_edit', label: 'Edit Academy', description: 'Update academies' },
+  { key: 'academy_delete', label: 'Delete Academy', description: 'Delete academies' },
   { key: 'profile_view', label: 'View Profile', description: 'Read own profile' },
   { key: 'user_read', label: 'View Users', description: 'Read users' },
   { key: 'user_write', label: 'Create User', description: 'Create users' },
@@ -67,6 +71,11 @@ export class FeatureAccessService {
       return true;
     }
 
+    // Use permissions array from the user profile (returned by /profile/me)
+    if (Array.isArray(user?.permissions) && user.permissions.length > 0) {
+      return user.permissions.includes(actionKey);
+    }
+
     const allowedActions = this.resolveAllowedActions(user);
     return allowedActions.has(actionKey);
   }
@@ -74,6 +83,11 @@ export class FeatureAccessService {
   resolveAllowedActions(user: any): Set<string> {
     if (this.isAdmin(user)) {
       return new Set(FEATURE_ACTIONS.map((a) => a.key));
+    }
+
+    // Use permissions array from the user profile (returned by /profile/me)
+    if (Array.isArray(user?.permissions) && user.permissions.length > 0) {
+      return new Set<string>(user.permissions);
     }
 
     const groupIds = this.extractGroupIds(user);

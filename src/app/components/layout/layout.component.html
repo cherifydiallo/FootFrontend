@@ -47,6 +47,23 @@
         </button>
       }
 
+      @if (canAny(['academy_read', 'academy_write', 'academy_edit', 'academy_delete'])) {
+        <button class="nav-item" (click)="navigateTo('/home/academies')" title="Academies">
+          <span class="nav-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 21h18"></path>
+              <path d="M5 21V7l7-4 7 4v14"></path>
+              <path d="M9 9h.01"></path>
+              <path d="M15 9h.01"></path>
+              <path d="M9 13h.01"></path>
+              <path d="M15 13h.01"></path>
+              <path d="M10 21v-4h4v4"></path>
+            </svg>
+          </span>
+          <span class="nav-label">Academies</span>
+        </button>
+      }
+
       <button class="nav-item" (click)="navigateTo('/home/profile')" title="Profile">
         <span class="nav-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
