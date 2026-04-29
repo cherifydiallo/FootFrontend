@@ -9,7 +9,7 @@ import { FeatureAccessService } from '../../services/feature-access.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './profile.component.html',
-  styleUrl: './profile.component.scss'
+  styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
   currentUser = signal<any>(null);
@@ -46,5 +46,24 @@ export class ProfileComponent implements OnInit {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  get groupedPermissions(): { name: string; label: string; perms: string[] }[] {
+    const perms: string[] = this.currentUser()?.permissions || [];
+    const map: Record<string, string[]> = {};
+
+    for (const p of perms) {
+      const parts = (p || '').split('_');
+      const key = parts.length > 1 ? parts[0] : 'other';
+      if (!map[key]) map[key] = [];
+      map[key].push(p);
+    }
+
+    // Map to array with friendly labels
+    return Object.keys(map).map((k) => ({
+      name: k,
+      label: k.charAt(0).toUpperCase() + k.slice(1),
+      perms: map[k]
+    }));
   }
 }

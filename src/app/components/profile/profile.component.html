@@ -66,8 +66,8 @@
         </div>
       }
 
-      <!-- Permissions -->
-      @if (currentUser()?.permissions?.length) {
+      <!-- Permissions (grouped) -->
+      @if (groupedPermissions.length) {
         <div class="profile-card info-card">
           <h3 class="card-section-title">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -76,11 +76,17 @@
             </svg>
             Permissions
           </h3>
-          <div class="tag-list">
-            @for (perm of currentUser().permissions; track perm) {
-              <span class="tag tag-permission">{{ permissionLabels[perm] || perm }}</span>
-            }
-          </div>
+
+          @for (group of groupedPermissions; track group.name) {
+            <div class="permission-group">
+              <h4 class="permission-group-title">{{ group.label }}</h4>
+              <div class="tag-list">
+                @for (perm of group.perms; track perm) {
+                  <span class="tag tag-permission">{{ permissionLabels[perm] || perm }}</span>
+                }
+              </div>
+            </div>
+          }
         </div>
       }
     }

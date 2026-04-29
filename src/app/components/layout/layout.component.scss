@@ -1,357 +1,203 @@
-// Variables
-$primary-color: #007bff;
-$primary-hover: #0056b3;
-$text-color: #333;
-$light-gray: #f8f9fa;
-$border-color: #ddd;
-$transition: all 0.3s ease;
-$sidebar-width: 80px;
-$sidebar-width-mobile: 200px;
+// Material Layout Styles with Responsive Design
+$mobile-breakpoint: 599px;
+$tablet-breakpoint: 960px;
+$desktop-breakpoint: 1200px;
 
-.layout-wrapper {
-  display: flex;
-  min-height: 100vh;
-}
-
+// Layout container for sidenav
 .layout-container {
   display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 100vh;
-}
-
-// Sidebar
-.sidebar {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: $sidebar-width;
   height: 100vh;
-  background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
-  color: white;
-  z-index: 200;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease;
-  align-items: center;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  width: 100%;
 
-  @media (max-width: 768px) {
-    width: $sidebar-width-mobile;
-    transform: translateX(-100%);
-
-    &.open {
-      transform: translateX(0);
-      align-items: flex-start;
-    }
+  mat-sidenav-container {
+    width: 100%;
   }
 }
 
-.sidebar-header {
-  padding: 15px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+// Sidenav styling
+.sidenav {
+  width: 250px;
+  background: linear-gradient(135deg, var(--mat-sys-surface) 0%, var(--mat-sys-surface-dim) 100%);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: $mobile-breakpoint) {
+    width: 280px;
+  }
+}
+
+// Sidenav header
+.sidenav-header {
+  padding: 16px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-
-  @media (max-width: 768px) {
-    padding: 20px;
-  }
+  min-height: 64px;
+  background: linear-gradient(135deg, var(--mat-sys-primary) 0%, var(--mat-sys-primary-container) 100%);
+  color: var(--mat-sys-on-primary);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar-brand {
-  font-size: 16px;
-  font-weight: 700;
+.brand-name {
   margin: 0;
-  flex-grow: 1;
-  display: none;
-
-  @media (max-width: 768px) {
-    display: block;
-  }
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
-.close-btn {
-  display: none;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 0;
-  width: 30px;
-  height: 30px;
-  align-items: center;
-  justify-content: center;
-  transition: $transition;
+// Sidenav list
+.sidenav-list {
+  padding: 8px 0;
 
-  &:hover {
-    color: #ecf0f1;
-  }
+  .nav-link {
+    margin: 4px 0;
+    border-radius: 4px;
+    transition: all 0.3s ease;
 
-  @media (max-width: 768px) {
-    display: flex;
-  }
-}
-
-.sidebar-nav {
-  flex-grow: 1;
-  padding: 15px 0;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  gap: 10px;
-
-  @media (max-width: 768px) {
-    align-items: flex-start;
-    padding: 20px 0;
-    gap: 0;
-  }
-}
-
-.nav-item {
-  width: 100%;
-  padding: 12px;
-  background: none;
-  border: none;
-  color: white;
-  text-align: center;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-  transition: $transition;
-  font-size: 12px;
-  font-weight: 500;
-  border-radius: 8px;
-  margin: 0 8px;
-
-  @media (max-width: 768px) {
-    justify-content: flex-start;
-    padding: 15px 20px;
-    margin: 0;
-    border-radius: 0;
-    width: auto;
-  }
-
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.15);
-    transform: translateX(4px);
-
-    .nav-icon svg {
-      transform: scale(1.15);
+    &:hover {
+      background-color: var(--mat-sys-secondary-container);
     }
 
-    @media (max-width: 768px) {
-      transform: none;
-      background-color: rgba(255, 255, 255, 0.1);
+    mat-icon {
+      margin-right: 16px;
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
     }
   }
 
-  &:active {
-    background-color: rgba(255, 255, 255, 0.2);
-  }
-}
+  .admin-link {
+    margin-top: 8px;
+    color: var(--mat-sys-error);
 
-.nav-icon {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  
-  svg {
-    width: 24px;
-    height: 24px;
-    stroke-width: 2;
-    transition: $transition;
-  }
-}
-
-.nav-label {
-  display: none;
-
-  @media (max-width: 768px) {
-    display: block;
-    flex-grow: 1;
-  }
-}
-
-.logout-btn {
-  color: #fca5a5;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  margin-top: auto;
-
-  &:hover {
-    background-color: rgba(252, 165, 165, 0.15);
-  }
-}
-
-.admin-btn {
-  color: #fbbf24;
-  background-color: rgba(251, 191, 36, 0.1);
-
-  &:hover {
-    background-color: rgba(251, 191, 36, 0.2);
-  }
-}
-
-.sidebar-footer {
-  padding: 10px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  width: 100%;
-  display: flex;
-  justify-content: center;
-
-  @media (max-width: 768px) {
-    padding: 0;
-    border-top: none;
-  }
-}
-
-.sidebar-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 150;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-
-  @media (max-width: 768px) {
-    &.open {
-      display: block;
-      opacity: 1;
+    mat-icon {
+      color: var(--mat-sys-error);
     }
   }
 }
 
-// Navbar
-.navbar {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+// Sidenav footer
+.sidenav-footer {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  width: calc(100% - 32px);
+
+  .logout-btn {
+    border-radius: 4px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: rgba(211, 47, 47, 0.1);
+    }
+  }
+}
+
+// Top toolbar
+.top-toolbar {
   position: sticky;
   top: 0;
   z-index: 100;
-  width: 100%;
-}
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0 16px;
+  min-height: 56px;
 
-.navbar-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 15px 20px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 20px;
-}
-
-.sidebar-toggle {
-  display: none;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 5px;
-  width: 40px;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
-  transition: $transition;
-
-  &:hover {
-    color: #ecf0f1;
+  @media (min-width: 961px) {
+    min-height: 64px;
   }
 
-  @media (max-width: 768px) {
-    display: flex;
+  &.sticky {
+    position: sticky;
+    top: 0;
   }
 }
 
-.navbar-brand-section {
-  display: flex;
-  align-items: center;
-  gap: 30px;
-  flex-grow: 1;
-  justify-content: flex-end;
-}
+.menu-button {
+  margin-right: 16px;
 
-.navbar-user-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.25);
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 18px;
-  color: white;
-  flex-shrink: 0;
-}
-
-.user-name-left {
-  font-weight: 500;
-  font-size: 14px;
-  color: white;
-  white-space: nowrap;
-
-  @media (max-width: 768px) {
+  @media (min-width: 961px) {
     display: none;
   }
 }
 
-.navbar-user {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-left: auto;
+.spacer {
+  flex: 1 1 auto;
 }
 
-.btn-logout {
-  padding: 8px 16px;
-  background-color: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: $transition;
+.user-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: none;
+  font-size: 1rem;
 
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.5);
+  mat-icon {
+    margin-right: 4px;
+  }
+
+  .username {
+    @media (max-width: $mobile-breakpoint) {
+      display: none;
+    }
   }
 }
 
-// Main Content
+// Main content area
 .main-content {
   flex: 1;
-  width: 100%;
-  min-height: 100%;
-  background-color: #f8f9fa;
-  display: flex;
-  justify-content: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px;
+  background-color: var(--mat-sys-background);
+
+  @media (min-width: 960px) {
+    padding: 24px;
+  }
+
+  @media (max-width: $mobile-breakpoint) {
+    padding: 8px;
+  }
 }
+
+// Sidenav content area
+.content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+// Responsive design improvements
+@media (max-width: 960px) {
+  .sidenav {
+    position: fixed;
+    height: 100%;
+    z-index: 200;
+  }
+}
+
+// Smooth transitions
+* {
+  &.mat-mdc-list-item {
+    transition: all 0.2s ease;
+  }
+}
+
+// Fix for toolbar buttons on mobile
+@media (max-width: $mobile-breakpoint) {
+  .top-toolbar {
+    gap: 4px;
+
+    .user-button {
+      font-size: 0.875rem;
+      padding: 0 8px;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+}
+
+

@@ -1,34 +1,17 @@
-// Variables
-$primary-color: #007bff;
-$primary-hover: #0056b3;
-$error-color: #dc3545;
-$border-color: #ddd;
-$text-color: #333;
-$bg-light: #f8f9fa;
-$transition: all 0.3s ease;
+// Material-based Login Styles with Responsive Design
+$mobile-breakpoint: 599px;
 
-// Login Container
 .login-container {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+  background: linear-gradient(135deg, var(--mat-sys-primary) 0%, var(--mat-sys-tertiary) 100%);
+  padding: 48px 16px 16px; // add top spacing and keep horizontal padding
+  animation: fadeIn 0.3s ease-out;
 }
 
-// Login Box
-.login-box {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  padding: 40px;
-  width: 100%;
-  max-width: 400px;
-  animation: slideIn 0.3s ease-out;
-}
-
-@keyframes slideIn {
+@keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(-20px);
@@ -39,171 +22,228 @@ $transition: all 0.3s ease;
   }
 }
 
-// Title
-.login-title {
-  text-align: center;
-  margin: 0 0 30px;
-  font-size: 28px;
-  font-weight: 600;
-  color: $text-color;
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.4s ease-out;
+
+  @media (max-width: $mobile-breakpoint) {
+    max-width: 100%;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Card Header
+mat-card-header {
+  background: linear-gradient(135deg, var(--mat-sys-primary) 0%, var(--mat-sys-primary-container) 100%);
+  color: var(--mat-sys-on-primary);
+  margin: -16px -16px 24px -16px;
+  padding: 24px;
+  border-radius: 8px 8px 0 0;
+
+  mat-card-title {
+    margin: 0 0 8px 0;
+
+    h1 {
+      margin: 0;
+      font-size: 1.75rem;
+      font-weight: 500;
+
+      @media (max-width: $mobile-breakpoint) {
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  mat-card-subtitle {
+    margin: 0;
+    opacity: 0.95;
+    font-size: 0.95rem;
+  }
+}
+
+// Card Content
+mat-card-content {
+  padding: 24px;
+
+  @media (max-width: $mobile-breakpoint) {
+    padding: 16px;
+  }
+}
+
+// Error Alert
+.error-alert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  background-color: rgba(211, 47, 47, 0.1);
+  border: 1px solid var(--mat-sys-error);
+  border-radius: 4px;
+  color: var(--mat-sys-error);
+  font-size: 0.95rem;
+  animation: slideDown 0.3s ease-out;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+}
+
+/* Styled card alert used in template */
+.error-alert-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  background-color: var(--mat-sys-error-container, rgba(211,47,47,0.08));
+  border: 1px solid var(--mat-sys-error, #d32f2f);
+  border-radius: 6px;
+  color: var(--mat-sys-on-error, #7f1d1d);
+  font-size: 0.98rem;
+}
+
+/* Snack bar error style */
+.snackbar-error {
+  background: linear-gradient(90deg, var(--mat-sys-error) 0%, var(--mat-sys-error-container) 100%);
+  color: var(--mat-sys-on-error, #fff) !important;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 // Form
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
-// Form Group
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+// Form Fields
+.full-width {
+  width: 100%;
 
-// Form Label
-.form-label {
-  font-weight: 500;
-  color: $text-color;
-  font-size: 14px;
-}
+  ::ng-deep {
+    .mat-mdc-form-field {
+      width: 100%;
+    }
 
-// Form Input
-.form-input {
-  padding: 12px 15px;
-  border: 1px solid $border-color;
-  border-radius: 6px;
-  font-size: 14px;
-  font-family: inherit;
-  transition: $transition;
-
-  &:focus {
-    outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-  }
-
-  &.is-invalid {
-    border-color: $error-color;
-    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25);
-
-    &:focus {
-      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25);
+    .mat-mdc-text-field-wrapper {
+      padding-bottom: 0;
     }
   }
-
-  &::placeholder {
-    color: #999;
-  }
 }
 
-// Error Messages
-.error-message {
-  padding: 12px 15px;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  border-radius: 6px;
-  color: #721c24;
-  font-size: 14px;
-  animation: slideIn 0.3s ease-out;
-}
-
-.error-text {
-  color: $error-color;
-  font-size: 12px;
-  margin-top: 4px;
-}
-
-// Buttons
-.btn {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: $transition;
+// Submit Button
+.submit-btn {
+  margin-top: 12px;
+  height: 44px;
+  font-size: 1rem;
+  font-weight: 500;
+  text-transform: none;
+  border-radius: 4px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
 
   &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+    opacity: 0.7;
   }
-}
-
-.btn-primary {
-  background-color: $primary-color;
-  color: white;
 
   &:not(:disabled):hover {
-    background-color: $primary-hover;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
-  &:not(:disabled):active {
-    transform: translateY(0);
+  mat-icon {
+    margin-right: 4px;
   }
-}
 
-// Loading Spinner
-.spinner {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+  mat-spinner {
+    display: inline-block;
   }
 }
 
-// Login Footer
-.login-footer {
+// Card Footer
+mat-card-footer {
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  padding: 16px;
   text-align: center;
-  margin-top: 20px;
-  font-size: 13px;
-  color: #666;
+  margin-top: 24px;
+}
 
-  p {
-    margin: 0;
-  }
+.footer-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: var(--mat-sys-on-surface-variant);
+  flex-wrap: wrap;
 
-  .link {
-    color: $primary-color;
+  .register-link {
+    color: var(--mat-sys-primary);
     text-decoration: none;
-    font-weight: 600;
-    transition: $transition;
+    font-weight: 500;
+    transition: all 0.3s ease;
 
     &:hover {
       text-decoration: underline;
-      color: $primary-hover;
+      color: var(--mat-sys-secondary);
+    }
+
+    &:focus {
+      outline: 2px solid var(--mat-sys-primary);
+      outline-offset: 2px;
+      border-radius: 2px;
     }
   }
 }
 
-// Responsive Design
-@media (max-width: 480px) {
-  .login-box {
-    padding: 30px 20px;
+// Responsive adjustments
+@media (max-width: $mobile-breakpoint) {
+  mat-card-header {
+    margin: -16px -16px 16px -16px;
+    padding: 16px;
+
+    mat-card-title h1 {
+      font-size: 1.35rem;
+    }
   }
 
-  .login-title {
-    font-size: 24px;
-    margin-bottom: 25px;
+  .submit-btn {
+    height: 40px;
+    font-size: 0.95rem;
   }
 
-  .form-input {
-    padding: 11px 12px;
-    font-size: 16px; // Prevents zoom on iOS
+  .footer-text {
+    flex-direction: column;
+    gap: 4px;
   }
 }

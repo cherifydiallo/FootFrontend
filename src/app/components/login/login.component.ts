@@ -4,24 +4,44 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    MatIconModule,
+    MatSnackBarModule
+  ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   loading = signal(false);
   submitted = signal(false);
   error = signal<string | null>(null);
+  hidePassword = signal(true);
 
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -65,13 +85,45 @@ export class LoginComponent implements OnInit {
       },
       error: (error) => {
         this.loading.set(false);
-        if (error?.accessDenied) {
-          this.authService.logout();
-          this.error.set('Access denied. Please contact your administrator.');
-        } else {
-          this.error.set(error?.error?.message || 'Login failed. Please try again.');
+        const errorMessage = this.getErrorMessage(error);
+        this.error.set(errorMessage);
+        try {
+          this.snackBar.open(errorMessage, 'Close', { duration: 5000, panelClass: ['snackbar-error'] });
+        } catch (e) {
+          // ignore if snackBar unavailable in some environments
         }
       }
     });
+  }
+
+  private getErrorMessage(error: any): string {
+    // Handle 401 Unauthorized - Invalid credentials
+    if (error?.status === 401) {
+      return 'Invalid identifiant or password. Please try again.';
+    }
+
+    // Handle 403 Forbidden - Access denied
+    if (error?.status === 403) {
+      this.authService.logout();
+      return 'Access denied. Please contact your administrator.';
+    }
+
+    // Handle 400 Bad Request
+    if (error?.status === 400) {
+      return error?.error?.message || 'Invalid login credentials. Please check and try again.';
+    }
+
+    // Handle 500 Server Error
+    if (error?.status === 500) {
+      return 'Server error. Please try again later.';
+    }
+
+    // Handle network errors
+    if (error?.status === 0) {
+      return 'Connection error. Please check your internet connection.';
+    }
+
+    // Fallback error message
+    return error?.error?.message || 'Login failed. Please try again.';
   }
 }

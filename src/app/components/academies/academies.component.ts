@@ -19,7 +19,7 @@ import { NotificationService } from '../../services/notification.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './academies.component.html',
-  styleUrl: './academies.component.scss'
+  styleUrls: ['./academies.component.scss']
 })
 export class AcademiesComponent implements OnInit {
   academies = signal<Academy[]>([]);

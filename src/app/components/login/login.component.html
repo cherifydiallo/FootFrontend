@@ -1,79 +1,108 @@
 <div class="login-container">
-  <div class="login-box">
-    <h1 class="login-title">Login</h1>
-    
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-      <!-- Error Message -->
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>
+        <h1>Welcome Back</h1>
+      </mat-card-title>
+      <mat-card-subtitle>Sign in to your account</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Error Alert -->
       @if (error()) {
-        <div class="error-message">
-          {{ error() }}
+        <div class="error-alert-card" role="alert">
+          <mat-icon>error_outline</mat-icon>
+          <span class="alert-message">{{ error() }}</span>
         </div>
       }
 
-      <!-- Username Field -->
-      <div class="form-group">
-        <label for="identifiant" class="form-label">Identifiant</label>
-        <input
-          type="text"
-          id="identifiant"
-          formControlName="identifiant"
-          class="form-input"
-          [class.is-invalid]="submitted() && f['identifiant'].errors"
-          placeholder="Enter your identifiant"
-        />
-        @if (submitted() && f['identifiant'].errors) {
-          <div class="error-text">
-            @if (f['identifiant'].errors['required']) {
-              Identifiant is required
-            }
-            @if (f['identifiant'].errors['minlength']) {
-              Identifiant must be at least 3 characters
-            }
-          </div>
-        }
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <!-- Identifiant Field -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Identifiant</mat-label>
+          <input
+            matInput
+            type="text"
+            id="identifiant"
+            formControlName="identifiant"
+            placeholder="Enter your identifiant"
+            autocomplete="username"
+          />
+          <mat-icon matPrefix>person</mat-icon>
+          @if (submitted() && f['identifiant'].errors) {
+            <mat-error>
+              @if (f['identifiant'].errors['required']) {
+                Identifiant is required
+              }
+              @if (f['identifiant'].errors['minlength']) {
+                Identifiant must be at least 3 characters
+              }
+            </mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Password Field -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            [type]="hidePassword() ? 'password' : 'text'"
+            id="password"
+            formControlName="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+          />
+          <mat-icon matPrefix>lock</mat-icon>
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="hidePassword.set(!hidePassword())"
+            type="button"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hidePassword()"
+          >
+            <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (submitted() && f['password'].errors) {
+            <mat-error>
+              @if (f['password'].errors['required']) {
+                Password is required
+              }
+              @if (f['password'].errors['minlength']) {
+                Password must be at least 6 characters
+              }
+            </mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Submit Button -->
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="loading()"
+          class="submit-btn"
+        >
+          @if (loading()) {
+            <ng-container>
+              <mat-spinner diameter="20" [strokeWidth]="3"></mat-spinner>
+              <span>Logging in...</span>
+            </ng-container>
+          } @else {
+            <ng-container>
+              <mat-icon>login</mat-icon>
+              <span>Login</span>
+            </ng-container>
+          }
+        </button>
+      </form>
+    </mat-card-content>
+
+    <mat-card-footer>
+      <div class="footer-text">
+        <span>Don't have an account?</span>
+        <a href="/register" class="register-link">Register here</a>
       </div>
-
-      <!-- Password Field -->
-      <div class="form-group">
-        <label for="password" class="form-label">Password</label>
-        <input
-          type="password"
-          id="password"
-          formControlName="password"
-          class="form-input"
-          [class.is-invalid]="submitted() && f['password'].errors"
-          placeholder="Enter your password"
-        />
-        @if (submitted() && f['password'].errors) {
-          <div class="error-text">
-            @if (f['password'].errors['required']) {
-              Password is required
-            }
-            @if (f['password'].errors['minlength']) {
-              Password must be at least 6 characters
-            }
-          </div>
-        }
-      </div>
-
-      <!-- Submit Button -->
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="loading()"
-      >
-        @if (loading()) {
-          <span class="spinner"></span>
-          Logging in...
-        } @else {
-          Login
-        }
-      </button>
-    </form>
-
-    <!-- Footer -->
-    <div class="login-footer">
-      <p>Don't have an account? <a href="/register" class="link">Register here</a></p>
-    </div>
-  </div>
+    </mat-card-footer>
+  </mat-card>
 </div>

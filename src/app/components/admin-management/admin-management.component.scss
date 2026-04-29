@@ -1,6 +1,6 @@
 .admin-management-container {
-  padding: 2rem;
-  max-width: 1400px;
+  padding: 24px;
+  max-width: 1100px;
   margin: 0 auto;
 
   .page-header {
@@ -32,9 +32,9 @@
     }
 
     .page-title {
-      font-size: 2rem;
+      font-size: 1.5rem;
       font-weight: 700;
-      color: #111827;
+      color: var(--mat-sys-on-surface);
       margin: 0;
     }
   }
