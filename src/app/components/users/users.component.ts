@@ -21,7 +21,7 @@ interface User {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './users.component.html',
-  styleUrl: './users.component.scss'
+  styleUrls: ['./users.component.scss']
 })
 export class UsersComponent implements OnInit {
   users = signal<User[]>([]);

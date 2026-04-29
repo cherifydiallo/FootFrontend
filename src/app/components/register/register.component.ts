@@ -17,7 +17,7 @@ export interface RegisterRequest {
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.scss'
+  styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
@@ -70,7 +70,7 @@ export class RegisterComponent implements OnInit {
       fullname: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       role: ['standard']
-    }, { 
+    }, {
       validators: this.passwordMatchValidator.bind(this)
     });
   }

@@ -44,3 +44,33 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .content.has-global-back .page-header .btn-back {
   display: none !important;
 }
+
+/* Standard page header used across routed pages */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 18px 0;
+}
+
+.page-header .page-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.6rem;
+  margin: 0;
+  font-weight: 700;
+  color: var(--mat-sys-on-surface, #0f172a);
+}
+
+.page-header .page-title svg {
+  flex-shrink: 0;
+  color: var(--mat-sys-primary, #1d4ed8);
+}
+
+.page .card, .page .profile-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fff;
+}

@@ -87,10 +87,15 @@ export class LoginComponent implements OnInit {
         this.loading.set(false);
         const errorMessage = this.getErrorMessage(error);
         this.error.set(errorMessage);
-        try {
-          this.snackBar.open(errorMessage, 'Close', { duration: 5000, panelClass: ['snackbar-error'] });
-        } catch (e) {
-          // ignore if snackBar unavailable in some environments
+        // Show inline error message in the form (red). Only show snackbar for
+        // server or network level errors where an inline message might be
+        // insufficient.
+        if (error?.status === 0 || (error?.status && error?.status >= 500)) {
+          try {
+            this.snackBar.open(errorMessage, 'Close', { duration: 5000, panelClass: ['snackbar-error'] });
+          } catch (e) {
+            // ignore if snackBar unavailable in some environments
+          }
         }
       }
     });

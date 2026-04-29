@@ -1,6 +1,6 @@
 <div class="profile-container">
   <header class="page-header">
-    <button class="back-btn" (click)="goBack()">
+    <button class="btn-back" (click)="goBack()">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="m15 18-6-6 6-6"/>
       </svg>
@@ -31,17 +31,36 @@
           </div>
           @if (currentUser()) {
             <div class="profile-info">
-              <h2 class="profile-name">{{ currentUser().username || currentUser().identifiant || 'User' }}</h2>
-              <p class="profile-email">{{ currentUser().email || '-' }}</p>
-              <span class="profile-id">ID: {{ currentUser().id || '-' }}</span>
+              <div class="profile-header-row">
+                <h2 class="profile-name">{{ currentUser().username || currentUser().identifiant || 'User' }}</h2>
+              </div>
+
+              <div class="profile-details">
+                <div class="detail-row">
+                  <div class="detail-label">Identifiant</div>
+                  <div class="detail-value">{{ currentUser().identifiant || '-' }}</div>
+                </div>
+
+                <div class="detail-row">
+                  <div class="detail-label">Full name</div>
+                  <div class="detail-value">{{ currentUser().fullName || currentUser().fullname || '-' }}</div>
+                </div>
+
+                <div class="detail-row">
+                  <div class="detail-label">Email</div>
+                  <div class="detail-value">{{ currentUser().email || '-' }}</div>
+                </div>
+
+                <div class="detail-row">
+                  <div class="detail-label">ID</div>
+                  <div class="detail-value">{{ currentUser().id || '-' }}</div>
+                </div>
+              </div>
             </div>
           }
         </div>
 
-        <div class="profile-actions">
-          <button class="btn btn-primary">Role: {{ currentUser()?.role || 'standard' }}</button>
-          <button class="btn btn-secondary" (click)="logout()">Logout</button>
-        </div>
+        <!-- role and logout removed from profile page per request -->
       </div>
 
       <!-- Groups -->

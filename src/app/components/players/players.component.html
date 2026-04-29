@@ -1,5 +1,13 @@
 <div class="page">
-  <h1>Players Management</h1>
+  <header class="page-header">
+    <h1 class="page-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 8v4l3 3"></path>
+      </svg>
+      Players Management
+    </h1>
+  </header>
 
   @if (error()) {
     <p class="error">{{ error() }}</p>
@@ -9,47 +17,58 @@
     <p class="success">{{ success() }}</p>
   }
 
-  <!-- Inline edit form (shown when editing a player) -->
-  @if (editingPlayer() && can('player_edit')) {
-    <section class="card">
-      <h2>Update Player #{{ editingPlayer()!.id }}</h2>
-      <div class="grid">
-        <input placeholder="Full name" [ngModel]="form().fullName" (ngModelChange)="updateField('fullName', $event)">
-        <input type="date" [ngModel]="form().birthDate" (ngModelChange)="updateField('birthDate', $event)">
-        <select [ngModel]="form().academyId ?? ''" (ngModelChange)="onAcademyChange($event)">
-          <option value="">Select academy</option>
-          @for (academy of academies(); track academy.id) {
-            <option [value]="academy.id">{{ academy.academyName }}</option>
+  <!-- Edit Player Modal (replaces inline editor) -->
+  @if (showEditPlayerDialog() && editingPlayer() && can('player_edit')) {
+    <div class="modal-overlay" (click)="closeEditPlayerDialog()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Update Player #{{ editingPlayer()!.id }}</h3>
+          <button class="close-modal" (click)="closeEditPlayerDialog()">×</button>
+        </div>
+
+        <div class="grid create-form">
+          <input placeholder="Full name" [ngModel]="form().fullName" (ngModelChange)="updateField('fullName', $event)">
+          <input type="date" [ngModel]="form().birthDate" (ngModelChange)="updateField('birthDate', $event)">
+          <select [ngModel]="form().academyId ?? ''" (ngModelChange)="onAcademyChange($event)">
+            <option value="">Select academy</option>
+            @for (academy of academies(); track academy.id) {
+              <option [value]="academy.id">{{ academy.academyName }}</option>
+            }
+          </select>
+          <select [ngModel]="form().categoryId ?? ''" (ngModelChange)="onCategoryChange($event)" [disabled]="!form().academyId || loadingCategories()">
+            <option value="">@if (loadingCategories()) { Loading categories... } @else { Select category }</option>
+            @for (category of categories(); track category.id) {
+              <option [value]="category.id">{{ category.name }}</option>
+            }
+          </select>
+          <input placeholder="Register number" [ngModel]="form().registerNumber" (ngModelChange)="updateField('registerNumber', $event)">
+          <input type="number" placeholder="Height (cm)" [ngModel]="form().heightCm" (ngModelChange)="updateNumberField('heightCm', $event)">
+          <input type="number" placeholder="Weight (kg)" [ngModel]="form().weightKg" (ngModelChange)="updateNumberField('weightKg', $event)">
+          <input placeholder="Father name" [ngModel]="form().fatherName" (ngModelChange)="updateField('fatherName', $event)">
+          <input placeholder="Mother name" [ngModel]="form().motherName" (ngModelChange)="updateField('motherName', $event)">
+        </div>
+        <div class="photo-upload-row">
+          <label class="photo-upload-label">Player Photo</label>
+          <input type="file" accept="image/*" (change)="onPhotoFileSelected($event)" class="photo-file-input">
+          @if (form().photo) {
+            <img [src]="form().photo" alt="Preview" class="photo-preview">
           }
-        </select>
-        <select [ngModel]="form().categoryId ?? ''" (ngModelChange)="onCategoryChange($event)" [disabled]="!form().academyId || loadingCategories()">
-          <option value="">@if (loadingCategories()) { Loading categories... } @else { Select category }</option>
-          @for (category of categories(); track category.id) {
-            <option [value]="category.id">{{ category.name }}</option>
-          }
-        </select>
-        <input placeholder="Register number" [ngModel]="form().registerNumber" (ngModelChange)="updateField('registerNumber', $event)">
-        <input type="number" placeholder="Height (cm)" [ngModel]="form().heightCm" (ngModelChange)="updateNumberField('heightCm', $event)">
-        <input type="number" placeholder="Weight (kg)" [ngModel]="form().weightKg" (ngModelChange)="updateNumberField('weightKg', $event)">
-        <input placeholder="Father name" [ngModel]="form().fatherName" (ngModelChange)="updateField('fatherName', $event)">
-        <input placeholder="Mother name" [ngModel]="form().motherName" (ngModelChange)="updateField('motherName', $event)">
+        </div>
+        <div class="actions">
+          <button (click)="submit()">Save</button>
+          <button class="secondary" (click)="closeEditPlayerDialog()">Cancel</button>
+        </div>
       </div>
-      <div class="photo-upload-row">
-        <label class="photo-upload-label">Player Photo</label>
-        <input type="file" accept="image/*" (change)="onPhotoFileSelected($event)" class="photo-file-input">
-        @if (form().photo) {
-          <img [src]="form().photo" alt="Preview" class="photo-preview">
-        }
-      </div>
-      <div class="actions">
-        <button (click)="submit()">Save</button>
-        <button class="secondary" (click)="resetForm()">Cancel</button>
-      </div>
-    </section>
+    </div>
   }
 
   <section class="card">
-    <h2>Search by Register Number</h2>
+    <div class="section-header">
+      <h2>Search by Register Number</h2>
+      <div class="section-actions">
+        <button type="button" class="secondary" (click)="goToAdvancedSearch(); $event.stopPropagation()">Advanced Search</button>
+      </div>
+    </div>
     <div class="search-row">
       <input placeholder="REG-2024-001" [ngModel]="registerSearch()" (ngModelChange)="registerSearch.set($event)">
       <button (click)="onSearch()">Search</button>
@@ -94,19 +113,19 @@
           </thead>
           <tbody>
             @for (player of players(); track player.id) {
-              <tr>
+              <tr (click)="openViewer(player)" tabindex="0" (keydown.enter)="openViewer(player)" (keydown.space)="openViewer(player)">
                 <td>{{ player.id }}</td>
                 <td>{{ player.fullName }}</td>
                 <td>{{ player.registerNumber }}</td>
                 <td>{{ player.category }}</td>
                 <td>{{ player.academy }}</td>
                 <td class="row-actions">
-                  <button class="small secondary" (click)="openViewer(player)">View</button>
+                  <button class="small secondary" (click)="$event.stopPropagation(); openViewer(player)">View</button>
                   @if (can('player_edit')) {
-                    <button class="small" (click)="edit(player)">Edit</button>
+                    <button class="small" (click)="$event.stopPropagation(); edit(player)">Edit</button>
                   }
                   @if (can('player_delete')) {
-                    <button class="small danger" (click)="remove(player)">Delete</button>
+                    <button class="small danger" (click)="$event.stopPropagation(); remove(player)">Delete</button>
                   }
                 </td>
               </tr>
@@ -207,6 +226,31 @@
               <div class="photo-fallback">{{ getInitials(viewedPlayer()!) }}</div>
             }
           </div>
+
+            @if (showAdvancedSearchDialog()) {
+              <div class="modal-overlay" (click)="closeAdvancedSearchDialog()">
+                <div class="modal-content" (click)="$event.stopPropagation()">
+                  <div class="modal-header">
+                    <h3>Advanced Players Search</h3>
+                    <button class="close-modal" (click)="closeAdvancedSearchDialog()">×</button>
+                  </div>
+
+                  <div class="grid create-form">
+                    <input placeholder="Name (min 3 chars)" [ngModel]="advancedSearchName()" (ngModelChange)="advancedSearchName.set($event)">
+                    <input type="number" placeholder="Category ID" [ngModel]="advancedSearchCategoryId()" (ngModelChange)="advancedSearchCategoryId.set($event)">
+                    <input type="date" placeholder="Birth date" [ngModel]="advancedSearchBirthDate()" (ngModelChange)="advancedSearchBirthDate.set($event)">
+                    <input type="number" placeholder="Height (cm)" [ngModel]="advancedSearchHeightCm()" (ngModelChange)="advancedSearchHeightCm.set($event)">
+                    <input type="number" placeholder="Weight (kg)" [ngModel]="advancedSearchWeightKg()" (ngModelChange)="advancedSearchWeightKg.set($event)">
+                    <input type="date" placeholder="Created at" [ngModel]="advancedSearchCreatedAt()" (ngModelChange)="advancedSearchCreatedAt.set($event)">
+                  </div>
+
+                  <div class="actions">
+                    <button (click)="advancedSearch()">Search</button>
+                    <button class="secondary" (click)="closeAdvancedSearchDialog()">Cancel</button>
+                  </div>
+                </div>
+              </div>
+            }
 
           <div class="license-info">
             <div class="info-row"><strong>Nom et prénom :</strong> {{ viewedPlayer()!.fullName }}</div>

@@ -24,7 +24,7 @@ interface PermissionActionGroup {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './admin-management.component.html',
-  styleUrl: './admin-management.component.scss'
+  styleUrls: ['./admin-management.component.scss']
 })
 export class AdminManagementComponent implements OnInit, OnDestroy {
   groups = signal<Group[]>([]);
@@ -175,6 +175,10 @@ export class AdminManagementComponent implements OnInit, OnDestroy {
   }
 
   openEditGroupDialog(group: Group): void {
+    if (this.isAdminGroup(group)) {
+      this.error.set('Admin groups cannot be edited here');
+      return;
+    }
     this.editingGroupId.set(group.id);
     this.editingGroupName.set(group.name);
     this.editingGroupDescription.set(group.description || '');
@@ -223,6 +227,11 @@ export class AdminManagementComponent implements OnInit, OnDestroy {
   }
 
   deleteGroup(group: Group): void {
+    if (this.isAdminGroup(group)) {
+      this.error.set('Admin groups cannot be deleted');
+      return;
+    }
+
     if (!this.can('group_delete_group')) {
       this.error.set('Access denied for deleting groups');
       return;
@@ -395,6 +404,11 @@ export class AdminManagementComponent implements OnInit, OnDestroy {
   }
 
   removeUserFromGroup(group: Group, user: User): void {
+    if (this.isAdminUser(user)) {
+      this.error.set('Admin users cannot be removed from groups');
+      return;
+    }
+
     if (!this.can('group_remove_user')) {
       this.error.set('Access denied for removing users from groups');
       return;
@@ -415,6 +429,12 @@ export class AdminManagementComponent implements OnInit, OnDestroy {
     const group = this.pendingRemoveGroup();
     const user = this.pendingRemoveMember();
     if (!group || !user) {
+      return;
+    }
+
+    if (this.isAdminUser(user)) {
+      this.error.set('Admin users cannot be removed from groups');
+      this.closeRemoveMemberDialog();
       return;
     }
 
@@ -597,6 +617,10 @@ export class AdminManagementComponent implements OnInit, OnDestroy {
   isAdminGroup(group: Group): boolean {
     const name = String(group?.name || '').trim().toLowerCase();
     return name.includes('admin');
+  }
+
+  isAdminUser(user: User): boolean {
+    return String(user?.role || '').toLowerCase() === 'admin';
   }
 
   canEditGroupPermissions(group: Group): boolean {

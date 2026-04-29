@@ -6,7 +6,7 @@ import { NotificationToastComponent } from './components/notification-toast/noti
   selector: 'app-root',
   imports: [RouterOutlet, NotificationToastComponent],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrls: ['./app.scss']
 })
 export class App {
   protected readonly title = signal('ECMStack');

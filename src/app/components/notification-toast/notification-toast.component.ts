@@ -7,7 +7,7 @@ import { NotificationService } from '../../services/notification.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './notification-toast.component.html',
-  styleUrl: './notification-toast.component.scss'
+  styleUrls: ['./notification-toast.component.scss']
 })
 export class NotificationToastComponent {
   private notificationService = inject(NotificationService);

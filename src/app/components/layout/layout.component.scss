@@ -124,6 +124,7 @@ $desktop-breakpoint: 1200px;
   flex: 1 1 auto;
 }
 
+/* user-button removed — toolbar no longer shows profile icon/username */
 .user-button {
   display: flex;
   align-items: center;

@@ -124,7 +124,8 @@ $desktop-breakpoint: 1200px;
 
 .detail-row {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
   padding: 12px 0;
   border-bottom: 1px solid var(--mat-sys-outline-variant);
 
@@ -134,13 +135,25 @@ $desktop-breakpoint: 1200px;
 }
 
 .detail-label {
-  font-weight: 500;
+  font-weight: 600;
   color: var(--mat-sys-on-surface-variant);
+  flex: 0 0 120px; /* reserve space for label */
 }
 
 .detail-value {
   color: var(--mat-sys-on-surface);
   word-break: break-all;
+  text-align: left;
+  flex: 1 1 auto;
+}
+
+.groups-list {
+  display: flex;
+  align-items: center;
+}
+
+.groups-list mat-chip {
+  margin-right: 8px;
 }
 
 // Actions Section

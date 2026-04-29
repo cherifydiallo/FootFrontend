@@ -1,0 +1,102 @@
+<div class="page">
+  <header class="page-header">
+    <h1 class="page-title">Advanced Players Search</h1>
+  </header>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  <section class="card">
+    <div class="grid create-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Name (min 3 chars)</mat-label>
+        <input matInput [ngModel]="name()" (ngModelChange)="name.set($event)" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Academy</mat-label>
+        <mat-select [ngModel]="academyId()" (ngModelChange)="onAcademyChange($event)">
+          <mat-option value="">All academies</mat-option>
+          @for (a of academies(); track a.id) {
+            <mat-option [value]="a.id">{{ a.academyName }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Category</mat-label>
+        <mat-select [ngModel]="categoryId()" (ngModelChange)="categoryId.set($event)">
+          <mat-option value="">All categories</mat-option>
+          @for (c of categories(); track c.id) {
+            <mat-option [value]="c.id">{{ c.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Birth date</mat-label>
+        <input matInput [matDatepicker]="pickerBirth" [ngModel]="birthDate()" (ngModelChange)="birthDate.set($event)">
+        <mat-datepicker-toggle matSuffix [for]="pickerBirth"></mat-datepicker-toggle>
+        <mat-datepicker #pickerBirth></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Height (cm)</mat-label>
+        <input matInput type="number" [ngModel]="heightCm()" (ngModelChange)="heightCm.set($event)" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Weight (kg)</mat-label>
+        <input matInput type="number" [ngModel]="weightKg()" (ngModelChange)="weightKg.set($event)" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Created at</mat-label>
+        <input matInput [matDatepicker]="pickerCreated" [ngModel]="createdAt()" (ngModelChange)="createdAt.set($event)">
+        <mat-datepicker-toggle matSuffix [for]="pickerCreated"></mat-datepicker-toggle>
+        <mat-datepicker #pickerCreated></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div class="actions">
+      <button mat-raised-button color="primary" (click)="search()">Search</button>
+      <button mat-stroked-button color="accent" (click)="back()">Back</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Results</h2>
+    @if (loading()) {
+      <p>Loading...</p>
+    } @else if (players().length === 0) {
+      <p>No players found.</p>
+    } @else {
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Register #</th>
+              <th>Category</th>
+              <th>Academy</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of players(); track p.id) {
+              <tr>
+                <td>{{ p.id }}</td>
+                <td>{{ p.fullName }}</td>
+                <td>{{ p.registerNumber }}</td>
+                <td>{{ p.category?.name || p.category?.label || p.category }}</td>
+                <td>{{ p.academy?.academyName || p.academy?.name || p.academy }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>

@@ -157,6 +157,21 @@ table {
   border-collapse: collapse;
 }
 
+/* Make rows clickable like list items, but keep action cell default cursor */
+.table-wrap table tbody tr {
+  cursor: pointer;
+}
+
+.table-wrap table tbody tr td.row-actions,
+.table-wrap table tbody tr .row-actions {
+  cursor: default;
+}
+
+.table-wrap table tbody tr:focus {
+  outline: none;
+  background: #f8fafc;
+}
+
 th,
 td {
   border-bottom: 1px solid #e5e7eb;

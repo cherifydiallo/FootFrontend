@@ -26,7 +26,7 @@ interface PlayerFormState {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './players.component.html',
-  styleUrl: './players.component.scss'
+  styleUrls: ['./players.component.scss']
 })
 export class PlayersComponent implements OnInit {
   players = signal<Player[]>([]);
@@ -36,8 +36,16 @@ export class PlayersComponent implements OnInit {
   showDeletePlayerDialog = signal(false);
   deletingPlayer = signal<Player | null>(null);
   showCreatePlayerDialog = signal(false);
+  showEditPlayerDialog = signal(false);
+  showAdvancedSearchDialog = signal(false);
   registerSearch = signal('');
   idSearch = signal('');
+  advancedSearchName = signal('');
+  advancedSearchCategoryId = signal('');
+  advancedSearchBirthDate = signal('');
+  advancedSearchHeightCm = signal('');
+  advancedSearchWeightKg = signal('');
+  advancedSearchCreatedAt = signal('');
   editingPlayer = signal<Player | null>(null);
   viewedPlayer = signal<Player | null>(null);
   photoLoadError = signal(false);
@@ -240,6 +248,20 @@ export class PlayersComponent implements OnInit {
     } else {
       this.categories.set([]);
     }
+
+    // open edit modal
+    this.showEditPlayerDialog.set(true);
+  }
+
+  openEditPlayerDialog(player: Player): void {
+    this.edit(player);
+    // edit() already opens the dialog by setting showEditPlayerDialog
+  }
+
+  closeEditPlayerDialog(): void {
+    this.showEditPlayerDialog.set(false);
+    this.resetForm();
+    this.editingPlayer.set(null);
   }
 
   resetForm(): void {
@@ -328,6 +350,93 @@ export class PlayersComponent implements OnInit {
     this.resetForm();
     this.loadAcademies();
     this.showCreatePlayerDialog.set(true);
+  }
+
+  openAdvancedSearchDialog(): void {
+    // reset advanced search fields
+    this.advancedSearchName.set('');
+    this.advancedSearchCategoryId.set('');
+    this.advancedSearchBirthDate.set('');
+    this.advancedSearchHeightCm.set('');
+    this.advancedSearchWeightKg.set('');
+    this.advancedSearchCreatedAt.set('');
+    // ensure categories are loaded for academy/category selection if needed
+    this.loadAcademies();
+    this.showAdvancedSearchDialog.set(true);
+  }
+
+  closeAdvancedSearchDialog(): void {
+    this.showAdvancedSearchDialog.set(false);
+  }
+
+  goToAdvancedSearch(): void {
+    this.router.navigate(['/home', 'players', 'advanced-search']).then((ok) => {
+      if (!ok) {
+        console.warn('Router.navigate returned false, falling back to location change');
+        try {
+          window.location.href = '/home/players/advanced-search';
+        } catch (e) {
+          console.error('Navigation fallback failed', e);
+        }
+      }
+    }).catch((err) => {
+      console.error('Router.navigate error', err);
+      try {
+        window.location.href = '/home/players/advanced-search';
+      } catch (e) {
+        console.error('Navigation fallback failed', e);
+      }
+    });
+  }
+
+  advancedSearch(): void {
+    this.error.set(null);
+    const params: Record<string, string> = {};
+
+    const name = this.advancedSearchName().trim();
+    if (name) {
+      if (name.length < 3) {
+        this.error.set('Le nom doit contenir au moins 3 caractères pour la recherche');
+        return;
+      }
+      params['name'] = name;
+    }
+
+    const categoryId = String(this.advancedSearchCategoryId()).trim();
+    if (categoryId) params['categoryId'] = categoryId;
+
+    const birthDate = String(this.advancedSearchBirthDate()).trim();
+    if (birthDate) params['birthDate'] = birthDate;
+
+    const height = String(this.advancedSearchHeightCm()).trim();
+    if (height) params['heightCm'] = height;
+
+    const weight = String(this.advancedSearchWeightKg()).trim();
+    if (weight) params['weightKg'] = weight;
+
+    const createdAt = String(this.advancedSearchCreatedAt()).trim();
+    if (createdAt) params['createdAt'] = createdAt;
+
+    // If no params provided, just reload players
+    if (Object.keys(params).length === 0) {
+      this.loadPlayers();
+      this.closeAdvancedSearchDialog();
+      return;
+    }
+
+    this.loading.set(true);
+    this.playerService.searchAdvanced(params).subscribe({
+      next: (response) => {
+        const list = response?.players || response || [];
+        this.players.set(this.normalizePlayers(list));
+        this.loading.set(false);
+        this.showAdvancedSearchDialog.set(false);
+      },
+      error: () => {
+        this.error.set('Failed to perform advanced search');
+        this.loading.set(false);
+      }
+    });
   }
 
   closeCreatePlayerDialog(): void {

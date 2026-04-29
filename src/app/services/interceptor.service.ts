@@ -8,6 +8,7 @@ import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 import { PLATFORM_ID } from '@angular/core';
+import { NotificationService } from './notification.service';
 
 function toAccessDeniedError(error: HttpErrorResponse): HttpErrorResponse {
   return new HttpErrorResponse({
@@ -23,10 +24,16 @@ function toAccessDeniedError(error: HttpErrorResponse): HttpErrorResponse {
 export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const platformId = inject(PLATFORM_ID);
+  const notification = inject(NotificationService);
 
   const showAlert = (message: string): void => {
     if (isPlatformBrowser(platformId)) {
-      alert(message);
+      try {
+        notification.showError(message, 4000);
+      } catch (e) {
+        // fallback to console if notification service unavailable
+        console.warn('Notification:', message);
+      }
     }
   };
 
@@ -45,10 +52,12 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
       if (error.status === 401) {
         // Unauthorized - token expired or invalid
         authService.logout();
+        // Use app notification instead of native alert
         showAlert('Access Denied');
       }
 
       if (error.status === 403) {
+        // Use app notification and propagate a typed 403 error
         showAlert('Access Denied');
         return throwError(() => toAccessDeniedError(error));
       }

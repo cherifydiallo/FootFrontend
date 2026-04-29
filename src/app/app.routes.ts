@@ -23,6 +23,7 @@ export const routes: Routes = [
       { path: 'groups', component: AdminManagementComponent },
       { path: 'academies', component: AcademiesComponent },
       { path: 'players', component: PlayersComponent },
+      { path: 'players/advanced-search', loadComponent: () => import('./components/players-advanced/players-advanced.component').then(m => m.PlayersAdvancedComponent) },
       { path: 'users', component: UsersComponent },
       { path: 'profile', component: ProfileComponent },
     ]

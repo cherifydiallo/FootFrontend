@@ -1,6 +1,12 @@
 <div class="register-container">
   <div class="register-box">
-    <h1 class="register-title">Register</h1>
+    <h1 class="register-title page-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 2a7 7 0 0 0-7 7v2l-1 2v2h16v-2l-1-2V9a7 7 0 0 0-7-7z"></path>
+        <circle cx="12" cy="11" r="3"></circle>
+      </svg>
+      Register
+    </h1>
 
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
       <!-- Error Message -->
