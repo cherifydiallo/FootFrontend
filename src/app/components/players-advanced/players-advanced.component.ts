@@ -49,11 +49,16 @@ export class PlayersAdvancedComponent implements OnInit {
   academies = signal<Academy[]>([]);
   loadingAcademies = signal(false);
 
+  // Player viewer signals
+  viewedPlayer = signal<Player | null>(null);
+  photoLoadError = signal(false);
+
   constructor(private playerService: PlayerService, private academyService: AcademyService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadAcademies();
   }
+
   loadAcademies(): void {
     this.loadingAcademies.set(true);
     this.academyService.getAllAcademies().subscribe({
@@ -146,7 +151,11 @@ export class PlayersAdvancedComponent implements OnInit {
     this.playerService.searchAdvanced(params).subscribe({
       next: (resp) => {
         const list = resp?.players || resp || [];
-        this.players.set(Array.isArray(list) ? (list as Player[]) : []);
+        // Normalize each player so academy and category are displayed as strings
+        const normalized = Array.isArray(list)
+          ? list.map((p) => this.normalizePlayer(p as any))
+          : [];
+        this.players.set(normalized);
         this.loading.set(false);
       },
       error: () => {
@@ -157,9 +166,120 @@ export class PlayersAdvancedComponent implements OnInit {
   }
 
   openPlayer(player: Player): void {
-    // Navigate to the players page and pass the player in navigation state
-    this.router.navigate(['/home', 'players'], { state: { player } }).catch((err) => {
-      console.error('Navigation to players failed', err);
-    });
+    this.photoLoadError.set(false);
+    this.viewedPlayer.set(player);
+  }
+
+  closeViewer(): void {
+    this.viewedPlayer.set(null);
+    this.photoLoadError.set(false);
+  }
+
+  onPhotoError(): void {
+    this.photoLoadError.set(true);
+  }
+
+  getPhotoUrl(player: Player): string {
+    return player.photo || '';
+  }
+
+  getInitials(player: Player): string {
+    return player.fullName
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part.charAt(0).toUpperCase())
+      .join('') || 'P';
+  }
+
+  formatBirthDate(value: string): string {
+    if (!value) {
+      return '-';
+    }
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return value;
+    }
+
+    return new Intl.DateTimeFormat('fr-FR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    }).format(date);
+  }
+
+  formatHeightCm(heightCm: number): string {
+    if (!heightCm) {
+      return '-';
+    }
+
+    const meters = Math.floor(heightCm / 100);
+    const centimeters = heightCm % 100;
+    return `${meters}m${String(centimeters).padStart(2, '0')}`;
+  }
+
+  isPlayerProfileComplete(player: Player): boolean {
+    return this.hasValue(player.fullName)
+      && this.hasValue(player.birthDate)
+      && this.hasValue(player.academy)
+      && this.hasValue(player.category)
+      && this.hasValue(player.registerNumber)
+      && this.hasNumber(player.heightCm)
+      && this.hasNumber(player.weightKg)
+      && this.hasValue(player.fatherName)
+      && this.hasValue(player.motherName);
+  }
+
+  private hasValue(value: unknown): boolean {
+    if (typeof value !== 'string') {
+      return false;
+    }
+
+    const normalized = value.trim();
+    return !!normalized && normalized !== '-';
+  }
+
+  private hasNumber(value: unknown): boolean {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) && parsed > 0;
+  }
+
+  private normalizePlayer(raw: any): Player {
+    if (!raw || typeof raw !== 'object') {
+      return raw as Player;
+    }
+
+    const academyObject = raw.academy && typeof raw.academy === 'object' ? raw.academy : null;
+    const categoryObject = raw.category && typeof raw.category === 'object' ? raw.category : null;
+
+    return {
+      ...raw,
+      academyId: Number(raw.academyId ?? academyObject?.id) || undefined,
+      categoryId: Number(raw.categoryId ?? categoryObject?.id) || undefined,
+      academy: this.extractDisplayLabel(raw.academy, ['academyName', 'name', 'label']),
+      category: this.extractDisplayLabel(raw.category, ['name', 'categoryName', 'label'])
+    } as Player;
+  }
+
+  private extractDisplayLabel(value: unknown, preferredKeys: string[]): string {
+    if (typeof value === 'string') {
+      return value;
+    }
+
+    if (!value || typeof value !== 'object') {
+      return '-';
+    }
+
+    const record = value as Record<string, unknown>;
+    for (const key of preferredKeys) {
+      const candidate = record[key];
+      if (typeof candidate === 'string' && candidate.trim()) {
+        return candidate;
+      }
+    }
+
+    const fallback = Object.values(record).find((entry) => typeof entry === 'string' && entry.trim());
+    return typeof fallback === 'string' ? fallback : '-';
   }
 }

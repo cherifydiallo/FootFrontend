@@ -86,12 +86,12 @@
           </thead>
           <tbody>
             @for (p of players(); track p.id) {
-              <tr>
+              <tr (click)="openPlayer(p)" tabindex="0" (keydown.enter)="openPlayer(p)" (keydown.space)="openPlayer(p)">
                 <td>{{ p.id }}</td>
                 <td>{{ p.fullName }}</td>
                 <td>{{ p.registerNumber }}</td>
-                <td>{{ p.category?.name || p.category?.label || p.category }}</td>
-                <td>{{ p.academy?.academyName || p.academy?.name || p.academy }}</td>
+                <td>{{ p.category }}</td>
+                <td>{{ p.academy }}</td>
               </tr>
             }
           </tbody>
@@ -100,3 +100,58 @@
     }
   </section>
 </div>
+
+<!-- Player Viewer Dialog -->
+@if (viewedPlayer()) {
+  <div class="viewer-overlay" (click)="closeViewer()">
+    <div class="viewer-dialog" (click)="$event.stopPropagation()">
+      <button class="close-viewer" (click)="closeViewer()">×</button>
+
+      <article class="license-card">
+        <header class="license-header">
+          <span class="line"></span>
+          <h2>LICENCE OFFICIELLE SFAC</h2>
+          <span class="line"></span>
+        </header>
+
+        <section class="license-body">
+          <div class="photo-box">
+            @if (viewedPlayer()!.photo && !photoLoadError()) {
+              <img
+                [src]="getPhotoUrl(viewedPlayer()!)"
+                [alt]="viewedPlayer()!.fullName"
+                (error)="onPhotoError()"
+              >
+            } @else {
+              <div class="photo-fallback">{{ getInitials(viewedPlayer()!) }}</div>
+            }
+          </div>
+
+          <div class="license-info">
+            <div class="info-row"><strong>Nom et prénom :</strong> {{ viewedPlayer()!.fullName }}</div>
+            <div class="info-row"><strong>Date de naissance :</strong> {{ formatBirthDate(viewedPlayer()!.birthDate) }}</div>
+            <div class="info-row"><strong>Académie :</strong> {{ viewedPlayer()!.academy }}</div>
+            <div class="info-row"><strong>Catégorie :</strong> <span class="category">{{ viewedPlayer()!.category }}</span></div>
+            <div class="info-row"><strong>Numéro du registre :</strong> {{ viewedPlayer()!.registerNumber }}</div>
+            <div class="info-row"><strong>Taille :</strong> {{ formatHeightCm(viewedPlayer()!.heightCm) }} <strong>Poids :</strong> {{ viewedPlayer()!.weightKg }} kg</div>
+            <div class="info-row"><strong>Nom du père :</strong> {{ viewedPlayer()!.fatherName }}</div>
+            <div class="info-row"><strong>Nom de la mère :</strong> {{ viewedPlayer()!.motherName }}</div>
+          </div>
+        </section>
+
+        <footer class="license-footer">
+          <div>SFAC - Tournoi 2026</div>
+          <div class="authorized" [class.complete]="isPlayerProfileComplete(viewedPlayer()!)">
+            <input
+              type="checkbox"
+              [checked]="isPlayerProfileComplete(viewedPlayer()!)"
+              disabled
+              aria-label="Joueur autorise"
+            >
+            <span>Joueur autorise</span>
+          </div>
+        </footer>
+      </article>
+    </div>
+  </div>
+}
