@@ -25,28 +25,24 @@
           </div>
           @if (currentUser()) {
             <div class="profile-info">
-              <div class="profile-header-row">
-                <h2 class="profile-name">{{ currentUser().username || currentUser().identifiant || 'Utilisateur' }}</h2>
-              </div>
-
               <div class="profile-details">
                 <div class="detail-row">
-                  <div class="detail-label">Identifiant</div>
+                  <div class="detail-label">Identifiant :</div>
                   <div class="detail-value">{{ currentUser().identifiant || '-' }}</div>
                 </div>
 
                 <div class="detail-row">
-                  <div class="detail-label">Nom complet</div>
+                  <div class="detail-label">Nom complet :</div>
                   <div class="detail-value">{{ currentUser().fullName || currentUser().fullname || '-' }}</div>
                 </div>
 
                 <div class="detail-row">
-                  <div class="detail-label">Email</div>
+                  <div class="detail-label">Email :</div>
                   <div class="detail-value">{{ currentUser().email || '-' }}</div>
                 </div>
 
                 <div class="detail-row">
-                  <div class="detail-label">ID</div>
+                  <div class="detail-label">ID :</div>
                   <div class="detail-value">{{ currentUser().id || '-' }}</div>
                 </div>
               </div>

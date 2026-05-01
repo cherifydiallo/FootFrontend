@@ -17,7 +17,6 @@
 
     <!-- Quick Actions Grid -->
     <div class="actions-section">
-      <h2 class="section-title">Actions rapides</h2>
       <div class="actions-grid">
         @if (canAny(['group_view', 'group_permission_view', 'group_permission_manage', 'group_view_group', 'group_view_members'])) {
           <mat-card class="action-card" tabindex="0" (click)="goTo('/home/groups')">

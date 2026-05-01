@@ -82,6 +82,8 @@ export class PlayersAdvancedComponent implements OnInit {
   showEditPlayerDialog = signal(false);
   showDeletePlayerDialog = signal(false);
   showCreatePlayerDialog = signal(false);
+  showPhotoViewer = signal(false);
+  showViewPhotoViewer = signal(false);
 
   constructor(
     private router: Router,
@@ -428,6 +430,26 @@ export class PlayersAdvancedComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
+  openPhotoViewer(): void {
+    if (this.form().photo) {
+      this.showPhotoViewer.set(true);
+    }
+  }
+
+  closePhotoViewer(): void {
+    this.showPhotoViewer.set(false);
+  }
+
+  openViewPhotoViewer(): void {
+    if (this.viewedPlayer()?.photo && !this.photoLoadError()) {
+      this.showViewPhotoViewer.set(true);
+    }
+  }
+
+  closeViewPhotoViewer(): void {
+    this.showViewPhotoViewer.set(false);
+  }
+
   onBirthDateChange(value: Date | string | null): void {
     if (!value) {
       this.updateField('birthDate', '');
@@ -561,6 +583,16 @@ export class PlayersAdvancedComponent implements OnInit {
         const players = response?.players || response || [];
         this.players.set(this.normalizePlayers(players));
         this.loading.set(false);
+
+        // Auto-scroll to results if players are found
+        if (players.length > 0) {
+          setTimeout(() => {
+            const resultsElement = document.getElementById('player-results');
+            if (resultsElement) {
+              resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }, 100);
+        }
       },
       error: (err) => {
         this.error.set(err?.message || 'Error searching players');
@@ -620,6 +652,6 @@ export class PlayersAdvancedComponent implements OnInit {
 
   /** Navigate back to previous view or home */
   back(): void {
-    this.router.navigate(['../']);
+    this.router.navigate(['/home/players']);
   }
 }

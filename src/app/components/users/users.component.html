@@ -9,6 +9,18 @@
     </h1>
   </header>
 
+  @if (can('user_write')) {
+    <div class="create-user-section">
+      <button class="create-user-btn" (click)="openCreateUserDialog()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Créer un utilisateur
+      </button>
+    </div>
+  }
+
   @if (error()) {
     <p class="error">{{ error() }}</p>
   }
@@ -56,51 +68,45 @@
   <section class="card">
     <div class="section-header">
       <h2>Tous les utilisateurs</h2>
-      @if (can('user_write')) {
-        <button class="create-btn" (click)="openCreateUserDialog()">Créer un utilisateur</button>
-      }
     </div>
     @if (loading()) {
       <p>Chargement...</p>
     } @else if (users().length === 0) {
       <p>Aucun utilisateur trouvé.</p>
     } @else {
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Identifiant</th>
-              <th>Email</th>
-              <th>Rôle</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (user of users(); track user.id) {
-              <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.identifiant || user.username }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.role }}</td>
-                <td class="actions">
-                  @if (can('user_edit')) {
-                    <button class="small" (click)="startEdit(user)">Modifier</button>
-                  }
-                  @if (can('user_delete')) {
-                    <button
-                      class="small danger"
-                      [disabled]="isAdminUser(user)"
-                      [title]="isAdminUser(user) ? 'Les administrateurs ne peuvent pas être supprimés' : 'Supprimer utilisateur'"
-                      (click)="remove(user)">
-                      Supprimer
-                    </button>
-                  }
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+      <div class="users-grid">
+        @for (user of users(); track user.id) {
+          <div class="user-card">
+            <div class="user-card-header">
+              <h3>{{ user.identifiant || user.username }}</h3>
+              <span class="user-id">ID: {{ user.id }}</span>
+            </div>
+            <div class="user-card-body">
+              <div class="user-info">
+                <span class="info-label">Email:</span>
+                <span class="info-value">{{ user.email }}</span>
+              </div>
+              <div class="user-info">
+                <span class="info-label">Rôle:</span>
+                <span class="info-value role-badge">{{ user.role }}</span>
+              </div>
+            </div>
+            <div class="user-card-actions">
+              @if (can('user_edit')) {
+                <button class="small" (click)="startEdit(user)">Modifier</button>
+              }
+              @if (can('user_delete')) {
+                <button
+                  class="small danger"
+                  [disabled]="isAdminUser(user)"
+                  [title]="isAdminUser(user) ? 'Les administrateurs ne peuvent pas être supprimés' : 'Supprimer utilisateur'"
+                  (click)="remove(user)">
+                  Supprimer
+                </button>
+              }
+            </div>
+          </div>
+        }
       </div>
     }
   </section>

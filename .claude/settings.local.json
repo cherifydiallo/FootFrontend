@@ -4,7 +4,8 @@
       "Bash(curl -s http://localhost:8081/academies/all)",
       "Bash(npm start *)",
       "Bash(ng build *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(xargs grep *)"
     ]
   }
 }

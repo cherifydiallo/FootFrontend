@@ -18,9 +18,11 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-wrap: wrap;
 
     svg {
       color: #800000;
+      flex-shrink: 0;
     }
   }
 }
@@ -31,6 +33,9 @@
   padding: 16px;
   margin-bottom: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+   h2 {
+      font-size: 1rem;
+    }
 }
 
 .grid {
@@ -152,6 +157,86 @@ input:disabled {
   overflow: auto;
 }
 
+.academies-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.academy-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 2px solid #e5e7eb;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
+    border-color: #10b981;
+  }
+}
+
+.academy-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #800000;
+  }
+
+  .academy-id {
+    font-size: 0.85rem;
+    color: #6b7280;
+    font-weight: 500;
+  }
+}
+
+.academy-card-body {
+  margin-bottom: 12px;
+}
+
+.academy-info {
+  display: flex;
+  margin-bottom: 8px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .info-label {
+    font-weight: 600;
+    color: #374151;
+    min-width: 80px;
+    font-size: 0.9rem;
+  }
+
+  .info-value {
+    color: #6b7280;
+    font-size: 0.9rem;
+    flex: 1;
+  }
+}
+
+.academy-card-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+
+  button {
+    flex: 1;
+  }
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -245,10 +330,14 @@ button.warning {
 .modal-content {
   width: 100%;
   max-width: 520px;
+  max-height: 90vh;
   background: #fff;
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 10px 36px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-header {
@@ -264,11 +353,23 @@ button.warning {
 
 .close-modal {
   border-radius: 999px;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   line-height: 1;
   padding: 0;
-  background: #4b5563;
+  background: #800000;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #600000;
+    transform: scale(1.1);
+  }
 }
 
 .delete-message {
@@ -280,4 +381,219 @@ button.warning {
   margin: 8px 0 0;
   color: #6b7280;
   font-size: 13px;
+}
+
+// Mobile responsive styles
+@media (max-width: 768px) {
+  .page {
+    padding: 16px;
+  }
+
+  .page-header {
+    margin-bottom: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    .page-title {
+      font-size: 1rem;
+      gap: 8px;
+    }
+  }
+
+  .card {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  input,
+  select {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .actions button {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .row-actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .row-actions button {
+    width: 100%;
+    font-size: 0.75rem;
+    padding: 6px 8px;
+  }
+
+  // Card optimization for mobile
+  .academies-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .academy-card {
+    padding: 12px;
+  }
+
+  .academy-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+
+    h3 {
+      font-size: 1rem;
+    }
+
+    .academy-id {
+      font-size: 0.8rem;
+    }
+  }
+
+  .academy-info {
+    flex-direction: column;
+    gap: 2px;
+
+    .info-label {
+      min-width: auto;
+      font-size: 0.85rem;
+    }
+
+    .info-value {
+      font-size: 0.85rem;
+    }
+  }
+
+  .academy-card-actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  // Modal optimization for mobile
+  .modal-overlay {
+    padding: 8px;
+  }
+
+  .modal-content {
+    max-height: 95vh;
+    padding: 12px;
+  }
+
+  .modal-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    position: relative;
+  }
+
+  .modal-header h3 {
+    font-size: 1rem;
+    flex: 1;
+  }
+
+  .close-modal {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .grid {
+    margin-bottom: 12px;
+  }
+
+  .actions {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 12px 0;
+    margin-top: 12px;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .section-actions {
+    width: 100%;
+  }
+
+  .section-actions button {
+    width: 100%;
+  }
+
+  .category-controls {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .create-categories-row {
+    grid-template-columns: 1fr;
+  }
+
+  .create-categories-row button {
+    width: 100%;
+  }
+
+  .category-list {
+    gap: 6px;
+  }
+
+  .category-chip {
+    font-size: 0.85rem;
+    padding: 4px 10px;
+  }
+}
+
+// Very small screens
+@media (max-width: 480px) {
+  .page-header {
+    .page-title {
+      font-size: 0.9rem;
+    }
+  }
+
+  .academies-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .academy-card {
+    padding: 10px;
+  }
+
+  .academy-card-header h3 {
+    font-size: 0.95rem;
+  }
+
+  .academy-card-header .academy-id {
+    font-size: 0.75rem;
+  }
+
+  .academy-info .info-label,
+  .academy-info .info-value {
+    font-size: 0.8rem;
+  }
 }

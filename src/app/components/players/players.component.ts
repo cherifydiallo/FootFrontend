@@ -40,6 +40,8 @@ export class PlayersComponent implements OnInit {
   showCreatePlayerDialog = signal(false);
   showEditPlayerDialog = signal(false);
   showAdvancedSearchDialog = signal(false);
+  showPhotoViewer = signal(false);
+  showViewPhotoViewer = signal(false);
   registerSearch = signal('');
   idSearch = signal('');
   advancedSearchName = signal('');
@@ -195,6 +197,16 @@ export class PlayersComponent implements OnInit {
         this.players.set(player ? [player] : []);
         this.error.set(null);
         this.loading.set(false);
+
+        // Auto-scroll to results if players are found
+        if (player) {
+          setTimeout(() => {
+            const resultsElement = document.getElementById('player-results');
+            if (resultsElement) {
+              resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }, 100);
+        }
       },
       error: () => {
         this.players.set([]);
@@ -493,6 +505,26 @@ export class PlayersComponent implements OnInit {
       this.updateField('photo', reader.result as string);
     };
     reader.readAsDataURL(file);
+  }
+
+  openPhotoViewer(): void {
+    if (this.form().photo) {
+      this.showPhotoViewer.set(true);
+    }
+  }
+
+  closePhotoViewer(): void {
+    this.showPhotoViewer.set(false);
+  }
+
+  openViewPhotoViewer(): void {
+    if (this.viewedPlayer()?.photo && !this.photoLoadError()) {
+      this.showViewPhotoViewer.set(true);
+    }
+  }
+
+  closeViewPhotoViewer(): void {
+    this.showViewPhotoViewer.set(false);
   }
 
   getPhotoUrl(player: Player): string {

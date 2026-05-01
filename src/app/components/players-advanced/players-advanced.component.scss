@@ -10,6 +10,14 @@
   gap: 12px;
   margin-bottom: 20px;
 
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 12px;
+  }
+
   .page-title {
     margin: 0;
     font-size: 1.75rem;
@@ -24,6 +32,39 @@
       font-size: 28px;
       width: 28px;
       height: 28px;
+    }
+  }
+
+  .simple-search-btn {
+    background: linear-gradient(135deg, #800000 0%, #5c0000 100%);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(128, 0, 0, 0.3);
+    flex-shrink: 0;
+
+    mat-icon {
+      color: white;
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+
+    &:hover {
+      background: linear-gradient(135deg, #5c0000 0%, #3d0000 100%);
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(128, 0, 0, 0.4);
+    }
+
+    &:active {
+      transform: scale(0.95);
     }
   }
 }
@@ -311,8 +352,108 @@ button.small {
 }
 
 @media (max-width: 768px) {
+  .page {
+    padding: 1rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 16px;
+
+    .header-content {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      gap: 8px;
+    }
+
+    .page-title {
+      font-size: 1.1rem;
+      gap: 8px;
+      flex: 1;
+
+      mat-icon {
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+      }
+    }
+
+    .simple-search-btn {
+      width: 40px;
+      height: 40px;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  .card {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .card h2 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
   .create-form {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .fields-grid.create-form {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .fields-grid:not(.create-form) {
     grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .create-form .field-row {
+    padding: 4px 0 !important;
+    width: 100% !important;
+  }
+
+  .create-form .field-row input,
+  .create-form .field-row select {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .field-row {
+    padding: 4px 0;
+  }
+
+  .create-form .field-row {
+    padding: 4px 0 !important;
+  }
+
+  .field-label {
+    font-size: 0.75rem;
+  }
+
+  .field-row input,
+  .field-row select {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+
+  .create-form .field-row input,
+  .create-form .field-row select {
+    padding: 8px !important;
+    font-size: 0.85rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .players-grid {
@@ -342,6 +483,285 @@ button.small {
 
   .actions button {
     width: 100%;
+  }
+
+  // Viewer overlay mobile styles
+  .viewer-overlay {
+    padding: 4px;
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+
+  .viewer-dialog {
+    max-width: 100%;
+    margin: 4px;
+  }
+
+  .license-header {
+    padding: 12px 16px;
+    gap: 6px;
+    position: relative;
+  }
+
+  .license-header h2 {
+    font-size: 0.9rem;
+    letter-spacing: 0.2px;
+  }
+
+  .license-header .line {
+    height: 1px;
+  }
+
+  .license-body {
+    padding: 16px 12px;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .photo-box,
+  .photo-fallback {
+    min-height: 150px;
+    max-height: 150px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .photo-fallback {
+    font-size: 32px;
+  }
+
+  .info-row {
+    font-size: 0.85rem;
+    border-bottom-width: 1px;
+    padding: 6px 0;
+  }
+
+  .license-footer {
+    padding: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 0.8rem;
+  }
+
+  // Modal mobile styles
+  .modal-content {
+    max-width: 100%;
+    margin: 4px;
+    max-height: 95vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .modal-header {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .modal-header h3 {
+    font-size: 1rem;
+    margin: 0;
+    text-align: center;
+  }
+
+  .close-modal {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #800000 0%, #5c0000 100%);
+    color: white;
+    font-size: 22px;
+    line-height: 1;
+    padding: 0;
+    z-index: 2;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+  }
+
+  .close-modal:hover {
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .modal-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .edit-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .edit-photo-section {
+    order: -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .photo-box,
+  .photo-fallback {
+    min-height: 180px;
+    max-height: 180px;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .photo-fallback {
+    font-size: 36px;
+  }
+
+  .photo-upload-section {
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .edit-fields-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .fields-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .field-row {
+    width: 100%;
+    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .field-row.full-width {
+    width: 100%;
+  }
+
+  .field-label {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+
+  .field-row input,
+  .field-row select {
+    padding: 12px;
+    font-size: 0.95rem;
+    width: 100%;
+    border-radius: 6px;
+  }
+
+  .photo-upload-section {
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .photo-upload-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #374151;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .photo-file-input {
+    width: 100%;
+    text-align: center;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    padding: 16px;
+    margin-top: 20px;
+    position: sticky;
+    bottom: 0;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    gap: 12px;
+  }
+
+  .modal-actions button {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  // Photo viewer mobile styles
+  .photo-viewer-overlay {
+    padding: 10px;
+  }
+
+  .photo-viewer-close {
+    top: -40px;
+    right: 0;
+    width: 40px;
+    height: 40px;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .close-viewer {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #800000 0%, #5c0000 100%);
+    color: white;
+    font-size: 22px;
+    line-height: 1;
+    padding: 0;
+    z-index: 2;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+  }
+
+  .close-viewer:hover {
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .photo-viewer-image {
+    max-height: 85vh;
   }
 }
 
@@ -378,8 +798,9 @@ button.small {
 
 .close-viewer {
   position: absolute;
-  top: 16px;
+  top: 50%;
   right: 16px;
+  transform: translateY(-50%);
   width: 34px;
   height: 34px;
   border-radius: 999px;
@@ -396,7 +817,7 @@ button.small {
 }
 
 .close-viewer:hover {
-  transform: scale(1.1);
+  transform: translateY(-50%) scale(1.1);
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
 }
 
@@ -415,6 +836,13 @@ button.small {
   padding: 20px 24px;
   background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
   border-bottom: 2px solid #800000;
+  position: relative;
+
+  .line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, #800000 50%, transparent 100%);
+  }
 
   h2 {
     margin: 0;
@@ -425,7 +853,8 @@ button.small {
     text-align: center;
     font-weight: 700;
     font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
-    flex: 1;
+    white-space: nowrap;
+    padding-right: 50px;
   }
 }
 
@@ -560,98 +989,6 @@ button.small {
   }
 }
 
-@media (max-width: 768px) {
-  .viewer-overlay {
-    padding: 8px;
-  }
-
-  .license-header {
-    padding: 16px 20px;
-    gap: 8px;
-  }
-
-  .license-header h2 {
-    font-size: 1rem;
-    letter-spacing: 0.3px;
-  }
-
-  .license-body {
-    padding: 20px 12px;
-    grid-template-columns: 1fr;
-  }
-
-  .photo-box,
-  .photo-fallback {
-    min-height: 180px;
-    max-height: 180px;
-  }
-
-  .photo-fallback {
-    font-size: 36px;
-  }
-
-  .info-row {
-    font-size: 0.9rem;
-    border-bottom-width: 1px;
-  }
-
-  .license-footer {
-    padding: 16px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    font-size: 0.9rem;
-  }
-
-  .modal-content {
-    max-width: 100%;
-    margin: 8px;
-  }
-
-  .modal-header {
-    padding: 16px 20px;
-  }
-
-  .modal-header h3 {
-    font-size: 1.2rem;
-  }
-
-  .modal-body {
-    padding: 20px;
-  }
-
-  .edit-layout {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .fields-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .edit-photo-section {
-    align-items: center;
-  }
-
-  .photo-box,
-  .photo-fallback {
-    min-height: 200px;
-    max-height: 200px;
-  }
-
-  .photo-fallback {
-    font-size: 36px;
-  }
-
-  .modal-actions {
-    flex-direction: column;
-  }
-
-  .modal-actions button {
-    width: 100%;
-  }
-}
-
 // Modal styles - viewer colors but better spacing
 .modal-overlay {
   position: fixed;
@@ -663,18 +1000,22 @@ button.small {
   z-index: 2000;
   padding: 20px;
   backdrop-filter: blur(5px);
+  overflow: hidden;
 }
 
 .modal-content {
   position: relative;
   width: 100%;
   max-width: 800px;
+  max-height: 90vh;
   animation: fadeIn 0.3s ease;
   background: #ffffff;
   border-radius: 12px;
   overflow: hidden;
   border: 2px solid #800000;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes fadeIn {
@@ -691,10 +1032,12 @@ button.small {
 .modal-header {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
   padding: 20px 24px;
   background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
   border-bottom: 2px solid #800000;
+  position: relative;
 }
 
 .modal-header h3 {
@@ -707,10 +1050,13 @@ button.small {
   font-weight: 700;
   font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
   flex: 1;
+  padding-right: 50px;
 }
 
 .modal-body {
   padding: 32px 24px;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .error-message {
@@ -800,8 +1146,9 @@ button.small {
 
 .close-modal {
   position: absolute;
-  top: 16px;
+  top: 50%;
   right: 16px;
+  transform: translateY(-50%);
   width: 34px;
   height: 34px;
   border-radius: 999px;
@@ -818,7 +1165,7 @@ button.small {
 }
 
 .close-modal:hover {
-  transform: scale(1.1);
+  transform: translateY(-50%) scale(1.1);
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
 }
 
@@ -840,6 +1187,9 @@ button.small {
   gap: 12px;
   justify-content: flex-end;
   margin-top: 24px;
+  padding: 16px;
+  border-top: 1px solid #e5e7eb;
+  background: white;
 }
 
 .modal-actions button {
@@ -883,16 +1233,270 @@ button.small {
 }
 
 .photo-file-input {
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  padding: 8px 12px;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  padding: 12px 16px;
   font-size: 0.9rem;
   cursor: pointer;
-  background: white;
-  transition: border-color 0.2s ease;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  transition: all 0.3s ease;
+  color: #374151;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    border-color: #800000;
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    color: #800000;
+    box-shadow: 0 4px 8px rgba(128, 0, 0, 0.15);
+    transform: translateY(-1px);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #800000;
+    box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.1);
+  }
+
+  &::file-selector-button {
+    background: linear-gradient(135deg, #800000 0%, #5c0000 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    margin-right: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(128, 0, 0, 0.2);
+
+    &:hover {
+      background: linear-gradient(135deg, #5c0000 0%, #3d0000 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px rgba(128, 0, 0, 0.3);
+    }
+  }
 }
 
-.photo-file-input:hover {
-  border-color: #800000;
-  background: #fef2f2;
+.photo-box {
+  border: 3px solid #800000;
+  min-height: 250px;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+
+  &.clickable {
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 12px rgba(128, 0, 0, 0.2);
+    }
+
+    &:hover .photo-hint {
+      opacity: 1;
+    }
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+}
+
+.photo-hint {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+  color: white;
+  padding: 20px 12px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// Photo Viewer Overlay
+.photo-viewer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.3s ease;
+}
+
+.photo-viewer-content {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-viewer-image {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.photo-viewer-close {
+  position: absolute;
+  top: -50px;
+  right: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #800000 0%, #5c0000 100%);
+  color: white;
+  border: 2px solid #600000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+
+  &:hover {
+    background: linear-gradient(135deg, #5c0000 0%, #3d0000 100%);
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+// Mobile-specific override for edit modal layout
+@media (max-width: 768px) {
+  .modal-content .edit-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    width: 100% !important;
+  }
+
+  .modal-content .edit-photo-section {
+    order: -1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    gap: 4px !important;
+    max-height: 40vh !important;
+  }
+
+  .modal-content .photo-box,
+  .modal-content .photo-fallback {
+    min-height: 120px !important;
+    max-height: 120px !important;
+    width: 100% !important;
+    max-width: 200px !important;
+  }
+
+  .modal-content .photo-fallback {
+    font-size: 28px !important;
+  }
+
+  .modal-content .photo-upload-section {
+    width: 100% !important;
+    max-width: 200px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 4px !important;
+  }
+
+  .modal-content .edit-fields-section {
+    width: 100% !important;
+    max-width: 90% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+  }
+
+  .modal-content .fields-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  .modal-content .field-row {
+    width: 100% !important;
+    padding: 4px 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 3px !important;
+    margin: 0 auto !important;
+  }
+
+  .modal-content .field-row.full-width {
+    width: 100% !important;
+  }
+
+  .modal-content .field-label {
+    font-size: 0.85rem !important;
+    margin-bottom: 2px !important;
+    font-weight: 600 !important;
+  }
+
+  .modal-content .field-row input,
+  .modal-content .field-row select {
+    padding: 10px !important;
+    font-size: 0.9rem !important;
+    width: 100% !important;
+    border-radius: 6px !important;
+    box-sizing: border-box !important;
+  }
+
+  .modal-content .modal-actions {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    padding: 12px !important;
+  }
+
+  .modal-content .modal-actions button {
+    width: 100% !important;
+    padding: 12px !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+  }
 }

@@ -43,38 +43,37 @@
     } @else if (academies().length === 0) {
       <p>Aucune académie trouvée.</p>
     } @else {
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nom</th>
-              <th>Localité</th>
-              <th>Téléphone</th>
-              <th>Description</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (academy of academies(); track academy.id) {
-              <tr>
-                <td>{{ academy.id }}</td>
-                <td>{{ academy.academyName }}</td>
-                <td>{{ academy.localite || '-' }}</td>
-                <td>{{ academy.numeroTelephone || '-' }}</td>
-                <td>{{ academy.description || '-' }}</td>
-                <td class="row-actions">
-                  @if (canEdit()) {
-                    <button class="small" (click)="openEditAcademyDialog(academy)">Modifier</button>
-                  }
-                  @if (canDelete()) {
-                    <button class="small danger" (click)="openDeleteAcademyDialog(academy)">Supprimer</button>
-                  }
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+      <div class="academies-grid">
+        @for (academy of academies(); track academy.id) {
+          <div class="academy-card">
+            <div class="academy-card-header">
+              <h3>{{ academy.academyName }}</h3>
+              <span class="academy-id">ID: {{ academy.id }}</span>
+            </div>
+            <div class="academy-card-body">
+              <div class="academy-info">
+                <span class="info-label">Localité:</span>
+                <span class="info-value">{{ academy.localite || '-' }}</span>
+              </div>
+              <div class="academy-info">
+                <span class="info-label">Téléphone:</span>
+                <span class="info-value">{{ academy.numeroTelephone || '-' }}</span>
+              </div>
+              <div class="academy-info">
+                <span class="info-label">Description:</span>
+                <span class="info-value">{{ academy.description || '-' }}</span>
+              </div>
+            </div>
+            <div class="academy-card-actions">
+              @if (canEdit()) {
+                <button class="small" (click)="openEditAcademyDialog(academy)">Modifier</button>
+              }
+              @if (canDelete()) {
+                <button class="small danger" (click)="openDeleteAcademyDialog(academy)">Supprimer</button>
+              }
+            </div>
+          </div>
+        }
       </div>
     }
   </section>

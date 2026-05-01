@@ -18,10 +18,43 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-wrap: wrap;
 
     svg {
       color: #800000;
+      flex-shrink: 0;
     }
+  }
+}
+
+.create-user-section {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.create-user-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+  transition: all 0.3s ease;
+  border: none;
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
   }
 }
 
@@ -116,6 +149,95 @@ button:disabled {
   overflow: auto;
 }
 
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.user-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 2px solid #e5e7eb;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
+    border-color: #10b981;
+  }
+}
+
+.user-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #800000;
+  }
+
+  .user-id {
+    font-size: 0.85rem;
+    color: #6b7280;
+    font-weight: 500;
+  }
+}
+
+.user-card-body {
+  margin-bottom: 12px;
+}
+
+.user-info {
+  display: flex;
+  margin-bottom: 8px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .info-label {
+    font-weight: 600;
+    color: #374151;
+    min-width: 60px;
+    font-size: 0.9rem;
+  }
+
+  .info-value {
+    color: #6b7280;
+    font-size: 0.9rem;
+    flex: 1;
+  }
+
+  .role-badge {
+    background: #e0f2fe;
+    color: #0c4a6e;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+}
+
+.user-card-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+
+  button {
+    flex: 1;
+  }
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -154,10 +276,14 @@ td {
 .modal-content {
   width: 100%;
   max-width: 620px;
+  max-height: 90vh;
   background: #fff;
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-header {
@@ -172,12 +298,24 @@ td {
 }
 
 .close-btn {
-  background: #4b5563;
+  background: #800000;
   border-radius: 999px;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   line-height: 1;
   padding: 0;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #600000;
+    transform: scale(1.1);
+  }
 }
 
 .create-user-form {
@@ -206,4 +344,191 @@ td {
 
 .modal-actions {
   justify-content: flex-end;
+}
+
+// Mobile responsive styles
+@media (max-width: 768px) {
+  .page {
+    padding: 16px;
+  }
+
+  .page-header {
+    margin-bottom: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    .page-title {
+      font-size: 1rem;
+      gap: 8px;
+    }
+  }
+
+  .card {
+    padding: 12px;
+    margin-bottom: 12px;
+     h2 {
+      font-size: 1rem;
+    }
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  input,
+  select {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .actions button {
+    width: 100%;
+    padding: 10px;
+  }
+
+  // Card optimization for mobile
+  .users-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .user-card {
+    padding: 12px;
+  }
+
+  .user-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+
+    h3 {
+      font-size: 1rem;
+    }
+
+    .user-id {
+      font-size: 0.8rem;
+    }
+  }
+
+  .user-info {
+    flex-direction: column;
+    gap: 2px;
+
+    .info-label {
+      min-width: auto;
+      font-size: 0.85rem;
+    }
+
+    .info-value {
+      font-size: 0.85rem;
+    }
+  }
+
+  .user-card-actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  // Modal optimization for mobile
+  .modal-overlay {
+    padding: 8px;
+  }
+
+  .modal-content {
+    max-height: 95vh;
+    padding: 12px;
+  }
+
+  .modal-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    position: relative;
+  }
+
+  .modal-header h3 {
+    font-size: 1rem;
+    flex: 1;
+  }
+
+  .close-btn {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .grid {
+    margin-bottom: 12px;
+  }
+
+  .actions {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 12px 0;
+    margin-top: 12px;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .create-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+// Very small screens
+@media (max-width: 480px) {
+  .page-header {
+    .page-title {
+      font-size: 0.9rem;
+    }
+  }
+
+  .users-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .user-card {
+    padding: 10px;
+  }
+
+  .user-card-header h3 {
+    font-size: 0.95rem;
+  }
+
+  .user-card-header .user-id {
+    font-size: 0.75rem;
+  }
+
+  .user-info .info-label,
+  .user-info .info-value {
+    font-size: 0.8rem;
+  }
+
+  .user-info .role-badge {
+    font-size: 0.75rem;
+    padding: 1px 6px;
+  }
 }
