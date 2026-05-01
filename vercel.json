@@ -1,6 +1,6 @@
 {
-  "buildCommand": "npm run build:vercel",
-  "outputDirectory": "dist/foot-frontend",
+  "buildCommand": "ng build --configuration production",
+  "outputDirectory": "dist/foot-frontend/browser",
   "rewrites": [
     {
       "source": "/(.*)",
