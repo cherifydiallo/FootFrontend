@@ -9,5 +9,5 @@ import { NotificationToastComponent } from './components/notification-toast/noti
   styleUrls: ['./app.scss']
 })
 export class App {
-  protected readonly title = signal('ECMStack');
+  protected readonly title = signal('EFAS');
 }
