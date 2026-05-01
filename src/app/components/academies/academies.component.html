@@ -1,19 +1,12 @@
 <div class="page">
   <header class="page-header">
-    <button class="btn-back" (click)="goBack()">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-      </svg>
-      Back
-    </button>
     <h1 class="page-title">
       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
         <path d="M2 17l10 5 10-5"></path>
         <path d="M2 12l10 5 10-5"></path>
       </svg>
-      Academies Management
+      Gestion des Académies
     </h1>
   </header>
 
@@ -26,38 +19,38 @@
   }
 
   <section class="card">
-    <h2>Get Academy by ID</h2>
+    <h2>Obtenir une académie par ID</h2>
     <div class="search-row">
       <input type="number" placeholder="1" [ngModel]="idSearch()" (ngModelChange)="idSearch.set($event)">
-      <button (click)="searchById()">Find</button>
-      <button class="secondary" (click)="idSearch.set(''); loadAcademies()">Reset</button>
+      <button (click)="searchById()">Trouver</button>
+      <button class="secondary" (click)="idSearch.set(''); loadAcademies()">Réinitialiser</button>
     </div>
   </section>
 
   <section class="card">
     <div class="section-header">
-      <h2>All Academies</h2>
+      <h2>Toutes les académies</h2>
       <div class="section-actions">
         @if (canCreate()) {
-          <button (click)="openCreateAcademyDialog()">Create Academy</button>
+          <button (click)="openCreateAcademyDialog()">Créer une académie</button>
         }
-        <button class="secondary" (click)="loadAcademies()">Refresh</button>
+        <button class="secondary" (click)="loadAcademies()">Actualiser</button>
       </div>
     </div>
 
     @if (loading()) {
-      <p>Loading...</p>
+      <p>Chargement...</p>
     } @else if (academies().length === 0) {
-      <p>No academies found.</p>
+      <p>Aucune académie trouvée.</p>
     } @else {
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
               <th>ID</th>
-              <th>Name</th>
-              <th>Localite</th>
-              <th>Phone</th>
+              <th>Nom</th>
+              <th>Localité</th>
+              <th>Téléphone</th>
               <th>Description</th>
               <th>Actions</th>
             </tr>
@@ -72,10 +65,10 @@
                 <td>{{ academy.description || '-' }}</td>
                 <td class="row-actions">
                   @if (canEdit()) {
-                    <button class="small" (click)="openEditAcademyDialog(academy)">Edit</button>
+                    <button class="small" (click)="openEditAcademyDialog(academy)">Modifier</button>
                   }
                   @if (canDelete()) {
-                    <button class="small danger" (click)="openDeleteAcademyDialog(academy)">Delete</button>
+                    <button class="small danger" (click)="openDeleteAcademyDialog(academy)">Supprimer</button>
                   }
                 </td>
               </tr>
@@ -88,13 +81,13 @@
 
   <section class="card">
     <div class="section-header">
-      <h2>Academy Categories</h2>
-      <button class="secondary" (click)="loadCategories()" [disabled]="!selectedAcademyId()">Refresh Categories</button>
+      <h2>Catégories d'académie</h2>
+      <button class="secondary" (click)="loadCategories()" [disabled]="!selectedAcademyId()">Actualiser les catégories</button>
     </div>
 
     <div class="category-controls">
       <select [ngModel]="selectedAcademyId() ?? ''" (ngModelChange)="onAcademySelectForCategories($event)">
-        <option value="">Select academy</option>
+        <option value="">Sélectionner une académie</option>
         @for (academy of academies(); track academy.id) {
           <option [value]="academy.id">{{ academy.academyName }}</option>
         }
@@ -102,21 +95,21 @@
 
       @if (canCreate()) {
         <input
-          placeholder="New category name (ex: U17)"
+          placeholder="Nom de la nouvelle catégorie (ex: U17)"
           [ngModel]="newCategoryName()"
           (ngModelChange)="newCategoryName.set($event)"
           [disabled]="!selectedAcademyId()"
         >
-        <button (click)="createCategory()" [disabled]="!selectedAcademyId()">Add Category</button>
+        <button class="warning" (click)="createCategory()" [disabled]="!selectedAcademyId()">Ajouter une catégorie</button>
       }
     </div>
 
     @if (!selectedAcademyId()) {
-      <p>Select an academy to see its categories.</p>
+      <p>Sélectionnez une académie pour voir ses catégories.</p>
     } @else if (loadingCategories()) {
-      <p>Loading categories...</p>
+      <p>Chargement des catégories...</p>
     } @else if (categories().length === 0) {
-      <p>No categories found for this academy.</p>
+      <p>Aucune catégorie trouvée pour cette académie.</p>
     } @else {
       <div class="category-list">
         @for (category of categories(); track category.id) {
@@ -127,7 +120,7 @@
                 type="button"
                 class="chip-remove"
                 (click)="deleteCategory(category.id)"
-                aria-label="Delete category"
+                aria-label="Supprimer la catégorie"
               >×</button>
             }
           </span>
@@ -141,22 +134,22 @@
   <div class="modal-overlay" (click)="closeCreateAcademyDialog()">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3>Create New Academy</h3>
+        <h3>Créer une nouvelle académie</h3>
         <button class="close-modal" (click)="closeCreateAcademyDialog()">×</button>
       </div>
       <div class="grid">
         <input
-          placeholder="Academy name"
+          placeholder="Nom de l'académie"
           [ngModel]="form().academyName"
           (ngModelChange)="updateField('academyName', $event)"
         >
         <input
-          placeholder="Localite"
+          placeholder="Localité"
           [ngModel]="form().localite"
           (ngModelChange)="updateField('localite', $event)"
         >
         <input
-          placeholder="Phone number"
+          placeholder="Numéro de téléphone"
           [ngModel]="form().numeroTelephone"
           (ngModelChange)="updateField('numeroTelephone', $event)"
         >
@@ -167,17 +160,17 @@
         >
       </div>
       <div class="create-categories-box">
-        <label>Categories For This Academy</label>
+        <label>Catégories pour cette académie</label>
         <div class="create-categories-row">
           <input
-            placeholder="Category name (ex: U17)"
+            placeholder="Nom de la catégorie (ex: U17)"
             [ngModel]="createCategoryInput()"
             (ngModelChange)="createCategoryInput.set($event)"
           >
-          <button type="button" class="secondary" (click)="addCreateCategoryToList()">Add</button>
+          <button type="button" class="secondary" (click)="addCreateCategoryToList()">Ajouter</button>
         </div>
         @if (createCategoryList().length === 0) {
-          <p class="hint">No categories yet. Add one or more categories before create if needed.</p>
+          <p class="hint">Aucune catégorie pour le moment. Ajoutez une ou plusieurs catégories avant de créer si nécessaire.</p>
         } @else {
           <div class="category-list">
             @for (categoryName of createCategoryList(); track categoryName) {
@@ -190,8 +183,8 @@
         }
       </div>
       <div class="actions">
-        <button (click)="createAcademy()">Create</button>
-        <button class="secondary" (click)="closeCreateAcademyDialog()">Cancel</button>
+        <button (click)="createAcademy()">Créer</button>
+        <button class="secondary" (click)="closeCreateAcademyDialog()">Annuler</button>
       </div>
     </div>
   </div>
@@ -201,22 +194,22 @@
   <div class="modal-overlay" (click)="closeEditAcademyDialog()">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3>Update Academy</h3>
+        <h3>Mettre à jour l'académie</h3>
         <button class="close-modal" (click)="closeEditAcademyDialog()">×</button>
       </div>
       <div class="grid">
         <input
-          placeholder="Academy name"
+          placeholder="Nom de l'académie"
           [ngModel]="form().academyName"
           (ngModelChange)="updateField('academyName', $event)"
         >
         <input
-          placeholder="Localite"
+          placeholder="Localité"
           [ngModel]="form().localite"
           (ngModelChange)="updateField('localite', $event)"
         >
         <input
-          placeholder="Phone number"
+          placeholder="Numéro de téléphone"
           [ngModel]="form().numeroTelephone"
           (ngModelChange)="updateField('numeroTelephone', $event)"
         >
@@ -227,8 +220,8 @@
         >
       </div>
       <div class="actions">
-        <button (click)="updateAcademy()">Save</button>
-        <button class="secondary" (click)="closeEditAcademyDialog()">Cancel</button>
+        <button (click)="updateAcademy()">Enregistrer</button>
+        <button class="secondary" (click)="closeEditAcademyDialog()">Annuler</button>
       </div>
     </div>
   </div>
@@ -238,17 +231,17 @@
   <div class="modal-overlay" (click)="closeDeleteAcademyDialog()">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3>Delete Academy</h3>
+        <h3>Supprimer l'académie</h3>
         <button class="close-modal" (click)="closeDeleteAcademyDialog()">×</button>
       </div>
       <p class="delete-message">
-        Are you sure you want to delete
-        <strong>{{ deletingAcademy()!.academyName }}</strong>?
+        Êtes-vous sûr de vouloir supprimer
+        <strong>{{ deletingAcademy()!.academyName }}</strong> ?
       </p>
-      <p class="delete-hint">This action cannot be undone.</p>
+      <p class="delete-hint">Cette action ne peut pas être annulée.</p>
       <div class="actions">
-        <button class="secondary" (click)="closeDeleteAcademyDialog()">Cancel</button>
-        <button class="danger" (click)="deleteAcademy()">Delete Academy</button>
+        <button class="secondary" (click)="closeDeleteAcademyDialog()">Annuler</button>
+        <button class="danger" (click)="deleteAcademy()">Supprimer l'académie</button>
       </div>
     </div>
   </div>

@@ -1,7 +1,8 @@
 .toast {
   position: fixed;
   top: 20px;
-  right: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -45,27 +46,28 @@
 @keyframes toastInOut {
   0% {
     opacity: 0;
-    transform: translateX(10px);
+    transform: translateX(-50%) translateY(-10px);
   }
   12% {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(-50%) translateY(0);
   }
   88% {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(-50%) translateY(0);
   }
   100% {
     opacity: 0;
-    transform: translateX(10px);
+    transform: translateX(-50%) translateY(-10px);
   }
 }
 
 @media (max-width: 640px) {
   .toast {
-    left: 12px;
-    right: 12px;
+    left: 50%;
+    right: auto;
     top: 12px;
-    max-width: none;
+    max-width: 90%;
+    transform: translateX(-50%);
   }
 }

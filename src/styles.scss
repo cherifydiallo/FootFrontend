@@ -1,76 +1,297 @@
-
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
-@use '@angular/material' as mat;
-
-html {
-  @include mat.theme((
-    color: (
-      primary: mat.$azure-palette,
-      tertiary: mat.$blue-palette,
-    ),
-    typography: Roboto,
-    density: 0,
-  ));
-}
-
+/* Clean white background */
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
-  margin: 0;
-}
-/* You can add global styles to this file, and also import other style files */
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-/* When the layout toolbar shows a global back button, hide page-level back buttons
-   to avoid duplicate back controls inside routed pages (e.g. Groups, Players). */
-.content.has-global-back .page-header .back-btn,
-.content.has-global-back .page-header .btn-back {
-  display: none !important;
+  background: #ffffff;
+  color: #1f2937;
 }
 
-/* Standard page header used across routed pages */
-.page-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 0 0 18px 0;
-}
-
-.page-header .page-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 1.6rem;
-  margin: 0;
-  font-weight: 700;
-  color: var(--mat-sys-on-surface, #0f172a);
-}
-
-.page-header .page-title svg {
-  flex-shrink: 0;
-  color: var(--mat-sys-primary, #1d4ed8);
-}
-
-.page .card, .page .profile-card {
-  border: 1px solid #e5e7eb;
+/* Modern card styling */
+.card {
+  background: #ffffff;
   border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+/* Modern button styling */
+button {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Colorful primary buttons */
+button.mat-primary {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: white;
+}
+
+button.mat-accent {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+button.mat-warn {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+/* Modern form field styling */
+mat-form-field {
+  border-radius: 8px;
+}
+
+mat-form-field .mat-mdc-text-field-wrapper {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+mat-form-field .mat-mdc-text-field-wrapper:hover {
+  border-color: #800000;
+  background: #f9f0f0;
+}
+
+mat-form-field .mat-mdc-text-field-wrapper.mdc-text-field--focused {
+  border-color: #800000 !important;
+  background: #f9f0f0;
+  box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.1);
+}
+
+// Hide ALL Material outline borders completely
+mat-form-field .mat-mdc-text-field-wrapper .mat-mdc-form-field-outline,
+mat-form-field .mat-mdc-text-field-wrapper .mat-mdc-form-field-outline-thick,
+mat-form-field .mat-mdc-text-field-wrapper .mat-mdc-notched-outline,
+mat-form-field .mat-mdc-text-field-wrapper .mat-mdc-notched-outline__leading,
+mat-form-field .mat-mdc-text-field-wrapper .mat-mdc-notched-outline__notch,
+mat-form-field .mat-mdc-text-field-wrapper .mat-mdc-notched-outline__trailing {
+  display: none !important;
+  border: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+// Also hide the default border that appears on focus
+mat-form-field .mat-mdc-text-field-wrapper::before,
+mat-form-field .mat-mdc-text-field-wrapper::after {
+  display: none !important;
+  border: none !important;
+}
+
+mat-form-field .mat-mdc-text-field-wrapper.mdc-text-field--focused .mat-mdc-form-field-outline {
+  border-color: #800000 !important;
+}
+
+mat-form-field .mat-mdc-text-field-wrapper.mdc-text-field--focused .mat-mdc-form-field-outline-thick {
+  border-color: #800000 !important;
+}
+
+mat-form-field .mat-mdc-text-field-wrapper.mdc-text-field--focused .mat-mdc-notched-outline {
+  border-color: #800000 !important;
+}
+
+mat-form-field .mat-mdc-text-field-wrapper.mdc-text-field--focused .mat-mdc-notched-outline__leading,
+mat-form-field .mat-mdc-text-field-wrapper.mdc-text-field--focused .mat-mdc-notched-outline__notch,
+mat-form-field .mat-mdc-text-field-wrapper.mdc-text-field--focused .mat-mdc-notched-outline__trailing {
+  border-color: #800000 !important;
+}
+
+/* Colorful form icons */
+mat-form-field mat-icon {
+  color: #800000;
+}
+
+/* Modern table styling */
+table {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+thead {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: white;
+}
+
+thead th {
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-bottom: none;
+  padding: 16px 12px;
+}
+
+tbody tr {
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+tbody tr:hover {
+  background-color: #eef2ff;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Modern page header */
+.page-header {
+  background: #ffffff;
+  color: #1f2937;
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #800000;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #800000;
+}
+
+/* Modern action buttons */
+.row-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.row-actions button {
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.row-actions button.small {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+}
+
+.row-actions button.secondary {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: white;
+  border: none;
+}
+
+.row-actions button.danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+}
+
+.row-actions button:not(.secondary):not(.danger) {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+}
+
+/* Colorful icons */
+mat-icon {
+  color: #800000;
+}
+
+mat-icon.mat-primary {
+  color: #800000;
+}
+
+mat-icon.mat-accent {
+  color: #10b981;
+}
+
+mat-icon.mat-warn {
+  color: #ef4444;
+}
+
+/* Modern error message */
+.error {
+  background: #fee2e2;
+  color: #991b1b;
   padding: 16px;
-  background: #fff;
+  border-radius: 8px;
+  border-left: 4px solid #ef4444;
+  font-weight: 500;
+}
+
+/* Modern loading state */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: #6b7280;
+  font-size: 1.125rem;
+}
+
+/* Modern empty state */
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #6b7280;
+  font-size: 1.125rem;
+}
+
+/* Modern grid layout */
+.grid {
+  display: grid;
+  gap: 16px;
+}
+
+/* Modern actions section */
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+/* Colorful select dropdowns */
+mat-select {
+  color: #1f2937;
+}
+
+mat-select .mat-mdc-select-value {
+  color: #1f2937;
+}
+
+mat-select .mat-mdc-select-arrow {
+  color: #800000;
+}
+
+/* Colorful datepicker */
+mat-datepicker {
+  --mdc-calendar-day-selected-color: #800000;
+  --mdc-calendar-day-selected-background-color: #800000;
+}
+
+/* Modern responsive design */
+@media (max-width: 768px) {
+  .page-header {
+    padding: 16px;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .card {
+    padding: 16px;
+    border-radius: 8px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions button {
+    width: 100%;
+  }
 }

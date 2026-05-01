@@ -1,19 +1,12 @@
 <div class="admin-management-container">
   <header class="page-header">
-    <button class="btn-back" (click)="goBack()">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-      </svg>
-      Back
-    </button>
     <h1 class="page-title">
       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <rect x="3" y="4" width="18" height="14" rx="2" ry="2"></rect>
         <path d="M16 2v4"></path>
         <path d="M8 2v4"></path>
       </svg>
-      Admin Management
+      Gestion Administrative
     </h1>
   </header>
 
@@ -43,7 +36,7 @@
         class="tab-button"
         [class.active]="activeTab() === 'groups'"
         (click)="activeTab.set('groups')">
-        Groups Management
+        Gestion des Groupes
       </button>
     }
     @if (canAny(['group_permission_view', 'group_permission_manage'])) {
@@ -51,7 +44,7 @@
         class="tab-button"
         [class.active]="activeTab() === 'permissions'"
         (click)="activeTab.set('permissions')">
-        Permission Parameters
+        Paramètres de Permissions
       </button>
     }
   </div>
@@ -59,7 +52,7 @@
   @if (loading()) {
     <div class="loading-state">
       <div class="spinner"></div>
-      <p>Loading...</p>
+      <p>Chargement...</p>
     </div>
   } @else {
     <div class="tab-content">
@@ -67,30 +60,30 @@
       @if (activeTab() === 'groups' && can('group_view')) {
         <div class="groups-section">
           <div class="section-header">
-            <h2>Groups</h2>
+            <h2>Groupes</h2>
             @if (can('group_create')) {
               <button class="btn btn-primary" (click)="openCreateGroupDialog()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19"></line>
                   <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
-                Create Group
+                Créer un groupe
               </button>
             }
           </div>
 
           @if (can('group_view_group')) {
             <div class="section-header">
-              <h2>Get Group by ID</h2>
+              <h2>Obtenir un groupe par ID</h2>
               <div class="group-actions">
                 <input
                   type="number"
                   class="form-control"
-                  placeholder="Group ID"
+                  placeholder="ID du groupe"
                   [ngModel]="groupIdSearch()"
                   (ngModelChange)="groupIdSearch.set($event)"
                 >
-                <button class="btn btn-sm btn-info" (click)="findGroupById()">Find</button>
+                <button class="btn btn-sm btn-info" (click)="findGroupById()">Trouver</button>
               </div>
             </div>
           }
@@ -109,7 +102,7 @@
 
           @if (groups().length === 0) {
             <div class="empty-state">
-              <p>No groups found. Create one to get started!</p>
+              <p>Aucun groupe trouvé. Créez-en un pour commencer !</p>
             </div>
           } @else {
             <div class="groups-grid">
@@ -117,7 +110,7 @@
                 <div class="group-card">
                   <div class="group-header">
                     <h3>{{ group.name }}</h3>
-                    <span class="member-count">{{ group.memberCount || 0 }} members</span>
+                    <span class="member-count">{{ group.memberCount || 0 }} membres</span>
                   </div>
 
                   @if (group.description) {
@@ -127,7 +120,7 @@
                   <div class="group-footer">
                     <div class="group-dates">
                       @if (group.createdDate) {
-                        <span class="date">Created: {{ group.createdDate | date: 'short' }}</span>
+                        <span class="date">Créé: {{ group.createdDate | date: 'short' }}</span>
                       }
                     </div>
                     <div class="group-actions">
@@ -135,7 +128,7 @@
                         <button
                           class="btn btn-sm btn-info"
                           (click)="selectGroupForMembers(group)"
-                          title="View members">
+                          title="Voir les membres">
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                             <circle cx="9" cy="7" r="4"></circle>
@@ -149,7 +142,7 @@
                           class="btn btn-sm btn-warning"
                           (click)="openEditGroupDialog(group)"
                           [disabled]="isAdminGroup(group)"
-                          [title]="isAdminGroup(group) ? 'Admin groups cannot be edited' : 'Edit group'">
+                          [title]="isAdminGroup(group) ? 'Les groupes administrateurs ne peuvent pas être modifiés' : 'Modifier le groupe'">
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
@@ -161,7 +154,7 @@
                           class="btn btn-sm btn-danger"
                           (click)="deleteGroup(group)"
                           [disabled]="isAdminGroup(group)"
-                          [title]="isAdminGroup(group) ? 'Admin groups cannot be deleted' : 'Delete group'">
+                          [title]="isAdminGroup(group) ? 'Les groupes administrateurs ne peuvent pas être supprimés' : 'Supprimer le groupe'">
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="3 6 5 6 21 6"></polyline>
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -183,36 +176,36 @@
       @if (activeTab() === 'permissions' && canAny(['group_permission_view', 'group_permission_manage'])) {
         <div class="permissions-section">
           <div class="section-header">
-            <h2>Grant Permissions By Group</h2>
+            <h2>Accorder les permissions par groupe</h2>
             <button class="btn btn-primary" (click)="savePermissions()" [disabled]="savingPermissions() || !can('group_permission_manage')">
               @if (savingPermissions()) {
-                Saving...
+                Enregistrement...
               } @else {
-                Save Permissions
+                Enregistrer les permissions
               }
             </button>
           </div>
 
           <p class="permissions-help">
-            Configure backend permission parameters per group. These keys map directly to /groups/:groupId/permissions.
+            Configurez les paramètres de permissions backend par groupe. Ces clés correspondent directement à /groups/:groupId/permissions.
           </p>
           <div class="permissions-notice">
-            Admin groups are protected. Their permissions are visible but cannot be edited here.
+            Les groupes administrateurs sont protégés. Leurs permissions sont visibles mais ne peuvent pas être modifiées ici.
           </div>
 
           @if (groups().length === 0) {
             <div class="empty-state">
-              <p>No groups found. Create groups first, then configure permissions.</p>
+              <p>Aucun groupe trouvé. Créez d'abord des groupes, puis configurez les permissions.</p>
             </div>
           } @else {
             @for (permissionGroup of permissionActionGroups; track permissionGroup.key) {
               <section class="permission-group-block">
-                <h3>{{ permissionGroup.label }} Permissions</h3>
+                <h3>Permissions {{ permissionGroup.label }}</h3>
                 <div class="permissions-table-wrap">
                   <table class="permissions-table">
                     <thead>
                       <tr>
-                        <th>Group</th>
+                        <th>Groupe</th>
                         @for (action of permissionGroup.actions; track action.key) {
                           <th [title]="action.description">
                             <div class="permission-label">{{ action.label }}</div>
@@ -227,10 +220,10 @@
                           <td class="group-col">
                             <div class="group-cell">
                               <div class="group-name">{{ group.name }}</div>
-                              <div class="group-meta">Group #{{ group.id }}</div>
+                              <div class="group-meta">Groupe #{{ group.id }}</div>
                             </div>
                             @if (isAdminGroup(group)) {
-                              <span class="admin-protected-badge">Protected Admin</span>
+                              <span class="admin-protected-badge">Administrateur protégé</span>
                             }
                           </td>
                           @for (action of permissionGroup.actions; track action.key) {
@@ -240,7 +233,7 @@
                                 [checked]="hasGroupAction(group.id, action.key)"
                                 (change)="toggleGroupAction(group.id, action.key, $any($event.target).checked)"
                                 [disabled]="!canEditGroupPermissions(group)"
-                                [title]="isAdminGroup(group) ? 'Admin group permissions are protected' : ''"
+                                [title]="isAdminGroup(group) ? 'Les permissions du groupe administrateur sont protégées' : ''"
                                 [attr.aria-label]="group.name + ' - ' + action.label"
                               >
                             </td>

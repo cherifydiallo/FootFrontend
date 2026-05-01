@@ -11,88 +11,59 @@
           <path d="M3 9.5L12 4l9 5.5"></path>
           <path d="M9 22V12h6v10"></path>
         </svg>
-        Welcome to ECMStack Dashboard
+        Bienvenue sur le tableau de bord ECMStack
       </h1>
     </header>
 
-    <!-- Welcome Header -->
-    <mat-card class="welcome-card">
-      <mat-card-header>
-        <mat-card-title>
-          <h2 class="welcome-subtitle">Manage your football academy efficiently</h2>
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <p class="subtitle">Manage your football academy efficiently</p>
-      </mat-card-content>
-    </mat-card>
-
-
-
     <!-- Quick Actions Grid -->
     <div class="actions-section">
-      <h2 class="section-title">Quick Actions</h2>
+      <h2 class="section-title">Actions rapides</h2>
       <div class="actions-grid">
         @if (canAny(['group_view', 'group_permission_view', 'group_permission_manage', 'group_view_group', 'group_view_members'])) {
           <mat-card class="action-card" tabindex="0" (click)="goTo('/home/groups')">
             <mat-card-content>
-              <mat-icon class="action-icon">group</mat-icon>
-              <h3>Groups</h3>
-              <p>Manage your groups</p>
+              <mat-icon class="action-icon groups-icon">group</mat-icon>
+              <h3>Groupes</h3>
+              <p>Gérer vos groupes</p>
             </mat-card-content>
-            <mat-card-actions>
-              <button mat-stroked-button color="primary">View</button>
-            </mat-card-actions>
           </mat-card>
         }
 
         @if (can('player_read')) {
           <mat-card class="action-card" tabindex="0" (click)="goTo('/home/players')">
             <mat-card-content>
-              <mat-icon class="action-icon">sports_soccer</mat-icon>
-              <h3>Players</h3>
-              <p>Browse players</p>
+              <mat-icon class="action-icon players-icon">sports_soccer</mat-icon>
+              <h3>Joueurs</h3>
+              <p>Parcourir les joueurs</p>
             </mat-card-content>
-            <mat-card-actions>
-              <button mat-stroked-button color="primary">View</button>
-            </mat-card-actions>
           </mat-card>
         }
 
         @if (canAny(['academy_read', 'academy_write', 'academy_edit', 'academy_delete'])) {
           <mat-card class="action-card" tabindex="0" (click)="goTo('/home/academies')">
             <mat-card-content>
-              <mat-icon class="action-icon">school</mat-icon>
-              <h3>Academies</h3>
-              <p>Manage academies</p>
+              <mat-icon class="action-icon academies-icon">school</mat-icon>
+              <h3>Académies</h3>
+              <p>Gérer les académies</p>
             </mat-card-content>
-            <mat-card-actions>
-              <button mat-stroked-button color="primary">View</button>
-            </mat-card-actions>
           </mat-card>
         }
 
         <mat-card class="action-card" tabindex="0" (click)="goTo('/home/profile')">
           <mat-card-content>
-            <mat-icon class="action-icon">person</mat-icon>
-            <h3>Profile</h3>
-            <p>Update your profile</p>
+            <mat-icon class="action-icon profile-icon">person</mat-icon>
+            <h3>Profil</h3>
+            <p>Mettre à jour votre profil</p>
           </mat-card-content>
-          <mat-card-actions>
-            <button mat-stroked-button color="primary">View</button>
-          </mat-card-actions>
         </mat-card>
 
         @if (can('user_read')) {
           <mat-card class="action-card admin-card" tabindex="0" (click)="goTo('/home/users')">
             <mat-card-content>
-              <mat-icon class="action-icon">people</mat-icon>
-              <h3>Users</h3>
-              <p>Manage users</p>
+              <mat-icon class="action-icon users-icon">people</mat-icon>
+              <h3>Utilisateurs</h3>
+              <p>Gérer les utilisateurs</p>
             </mat-card-content>
-            <mat-card-actions>
-              <button mat-stroked-button color="warn">Manage</button>
-            </mat-card-actions>
           </mat-card>
         }
       </div>
@@ -102,7 +73,7 @@
     <div class="logout-section">
       <button mat-raised-button color="warn" (click)="logout()" class="logout-btn">
         <mat-icon>logout</mat-icon>
-        Logout
+        Déconnexion
       </button>
     </div>
   }

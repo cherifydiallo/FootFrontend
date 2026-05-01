@@ -29,6 +29,7 @@ export class UsersComponent implements OnInit {
   error = signal<string | null>(null);
   success = signal<string | null>(null);
   showCreateUserDialog = signal(false);
+  showEditUserDialog = signal(false);
   showDeleteUserDialog = signal(false);
   deletingUser = signal<User | null>(null);
   createIdentifiant = signal('');
@@ -38,6 +39,7 @@ export class UsersComponent implements OnInit {
   createRole = signal('standard');
   searchUsername = signal('');
   selected = signal<User | null>(null);
+  editIdentifiant = signal('');
   editFullname = signal('');
   editEmail = signal('');
   editRole = signal('standard');
@@ -168,9 +170,21 @@ export class UsersComponent implements OnInit {
 
   startEdit(user: User): void {
     this.selected.set(user);
+    this.editIdentifiant.set(user.identifiant || user.username || '');
     this.editFullname.set(user.fullname || user.fullName || '');
     this.editEmail.set(user.email || '');
     this.editRole.set(user.role || 'standard');
+    this.editPassword.set('');
+    this.showEditUserDialog.set(true);
+  }
+
+  closeEditUserDialog(): void {
+    this.showEditUserDialog.set(false);
+    this.selected.set(null);
+    this.editIdentifiant.set('');
+    this.editFullname.set('');
+    this.editEmail.set('');
+    this.editRole.set('standard');
     this.editPassword.set('');
   }
 
@@ -198,7 +212,7 @@ export class UsersComponent implements OnInit {
       next: () => {
         this.success.set('User updated successfully');
         this.notificationService.showSuccess('User updated successfully');
-        this.cancelEdit();
+        this.closeEditUserDialog();
         this.loadUsers();
       },
       error: () => {

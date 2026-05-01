@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { FeatureAccessService } from '../../services/feature-access.service';
 import { NotificationService } from '../../services/notification.service';
 import { Academy, AcademyCategory, AcademyService } from '../../services/academy.service';
+import { MatIconModule } from '@angular/material/icon';
 
 interface PlayerFormState {
   fullName: string;
@@ -24,15 +25,16 @@ interface PlayerFormState {
 @Component({
   selector: 'app-players',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './players.component.html',
   styleUrls: ['./players.component.scss']
 })
 export class PlayersComponent implements OnInit {
   players = signal<Player[]>([]);
-  loading = signal(true);
+  loading = signal(false);
   error = signal<string | null>(null);
   success = signal<string | null>(null);
+  hasSearched = signal(false);
   showDeletePlayerDialog = signal(false);
   deletingPlayer = signal<Player | null>(null);
   showCreatePlayerDialog = signal(false);
@@ -91,7 +93,7 @@ export class PlayersComponent implements OnInit {
       return;
     }
 
-    this.loadPlayers();
+    // Don't load players automatically - only load when searching
     this.loadAcademies();
   }
 
@@ -179,9 +181,10 @@ export class PlayersComponent implements OnInit {
 
   onSearch(): void {
     this.error.set(null);
+    this.hasSearched.set(true);
     const value = this.registerSearch().trim();
     if (!value) {
-      this.loadPlayers();
+      this.players.set([]);
       return;
     }
 
@@ -201,28 +204,10 @@ export class PlayersComponent implements OnInit {
     });
   }
 
-  searchById(): void {
+  clearResults(): void {
+    this.players.set([]);
+    this.hasSearched.set(false);
     this.error.set(null);
-    const id = Number(this.idSearch().trim());
-    if (!id) {
-      this.error.set('Please enter a valid player id');
-      return;
-    }
-
-    this.loading.set(true);
-    this.playerService.getPlayerById(id).subscribe({
-      next: (response) => {
-        const player = this.normalizePlayer(response?.player || response);
-        this.players.set(player ? [player] : []);
-        this.error.set(null);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.players.set([]);
-        this.error.set('Player not found');
-        this.loading.set(false);
-      }
-    });
   }
 
   edit(player: Player): void {
@@ -548,6 +533,26 @@ export class PlayersComponent implements OnInit {
     const meters = Math.floor(heightCm / 100);
     const centimeters = heightCm % 100;
     return `${meters}m${String(centimeters).padStart(2, '0')}`;
+  }
+
+  formatCategory(category: AcademyCategory | string | undefined): string {
+    if (!category) {
+      return '-';
+    }
+    if (typeof category === 'string') {
+      return category;
+    }
+    return category.name || '-';
+  }
+
+  formatAcademy(academy: Academy | string | undefined): string {
+    if (!academy) {
+      return '-';
+    }
+    if (typeof academy === 'string') {
+      return academy;
+    }
+    return academy.academyName || '-';
   }
 
   isPlayerProfileComplete(player: Player): boolean {

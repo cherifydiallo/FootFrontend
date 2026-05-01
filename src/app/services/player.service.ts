@@ -9,14 +9,28 @@ export interface Player {
   birthDate: string;
   academyId?: number;
   categoryId?: number;
-  academy?: string;
-  category?: string;
+  academy?: Academy | string;
+  category?: AcademyCategory | string;
   registerNumber: string;
   heightCm: number;
   weightKg: number;
   fatherName: string;
   motherName: string;
   photo?: string | null;
+}
+
+export interface Academy {
+  id: number;
+  academyName: string;
+  localite?: string;
+  numeroTelephone?: string;
+  description?: string;
+}
+
+export interface AcademyCategory {
+  id: number;
+  name: string;
+  academyId?: number;
 }
 
 export interface PlayerPayload {

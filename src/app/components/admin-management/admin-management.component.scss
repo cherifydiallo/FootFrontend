@@ -9,33 +9,18 @@
     gap: 1rem;
     margin-bottom: 2rem;
 
-    .btn-back {
+    .page-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #800000;
+      margin: 0;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #6b7280;
-      font-size: 0.875rem;
-      transition: color 0.2s;
-
-      &:hover {
-        color: #1f2937;
-      }
+      gap: 12px;
 
       svg {
-        width: 20px;
-        height: 20px;
+        color: #800000;
       }
-    }
-
-    .page-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--mat-sys-on-surface);
-      margin: 0;
     }
   }
 
@@ -686,7 +671,8 @@
     }
 
     .form-control {
-      width: 100%;
+      width: 85%;
+      margin: 0 auto;
       padding: 0.625rem 0.875rem;
       border: 1px solid #d1d5db;
       border-radius: 0.375rem;

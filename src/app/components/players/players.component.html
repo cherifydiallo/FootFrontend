@@ -5,7 +5,7 @@
         <circle cx="12" cy="12" r="10"></circle>
         <path d="M12 8v4l3 3"></path>
       </svg>
-      Players Management
+      Gestion des Joueurs
     </h1>
   </header>
 
@@ -21,42 +21,87 @@
   @if (showEditPlayerDialog() && editingPlayer() && can('player_edit')) {
     <div class="modal-overlay" (click)="closeEditPlayerDialog()">
       <div class="modal-content" (click)="$event.stopPropagation()">
+        <button class="close-modal" (click)="closeEditPlayerDialog()">×</button>
         <div class="modal-header">
-          <h3>Update Player #{{ editingPlayer()!.id }}</h3>
-          <button class="close-modal" (click)="closeEditPlayerDialog()">×</button>
+          <h3>Mettre à jour le joueur #{{ editingPlayer()!.id }}</h3>
         </div>
 
-        <div class="grid create-form">
-          <input placeholder="Full name" [ngModel]="form().fullName" (ngModelChange)="updateField('fullName', $event)">
-          <input type="date" [ngModel]="form().birthDate" (ngModelChange)="updateField('birthDate', $event)">
-          <select [ngModel]="form().academyId ?? ''" (ngModelChange)="onAcademyChange($event)">
-            <option value="">Select academy</option>
-            @for (academy of academies(); track academy.id) {
-              <option [value]="academy.id">{{ academy.academyName }}</option>
-            }
-          </select>
-          <select [ngModel]="form().categoryId ?? ''" (ngModelChange)="onCategoryChange($event)" [disabled]="!form().academyId || loadingCategories()">
-            <option value="">@if (loadingCategories()) { Loading categories... } @else { Select category }</option>
-            @for (category of categories(); track category.id) {
-              <option [value]="category.id">{{ category.name }}</option>
-            }
-          </select>
-          <input placeholder="Register number" [ngModel]="form().registerNumber" (ngModelChange)="updateField('registerNumber', $event)">
-          <input type="number" placeholder="Height (cm)" [ngModel]="form().heightCm" (ngModelChange)="updateNumberField('heightCm', $event)">
-          <input type="number" placeholder="Weight (kg)" [ngModel]="form().weightKg" (ngModelChange)="updateNumberField('weightKg', $event)">
-          <input placeholder="Father name" [ngModel]="form().fatherName" (ngModelChange)="updateField('fatherName', $event)">
-          <input placeholder="Mother name" [ngModel]="form().motherName" (ngModelChange)="updateField('motherName', $event)">
-        </div>
-        <div class="photo-upload-row">
-          <label class="photo-upload-label">Player Photo</label>
-          <input type="file" accept="image/*" (change)="onPhotoFileSelected($event)" class="photo-file-input">
-          @if (form().photo) {
-            <img [src]="form().photo" alt="Preview" class="photo-preview">
+        <div class="modal-body">
+          @if (error()) {
+            <div class="error-message">{{ error() }}</div>
           }
-        </div>
-        <div class="actions">
-          <button (click)="submit()">Save</button>
-          <button class="secondary" (click)="closeEditPlayerDialog()">Cancel</button>
+
+          <div class="edit-layout">
+            <div class="edit-photo-section">
+              <div class="photo-box">
+                @if (form().photo) {
+                  <img [src]="form().photo" alt="Photo du joueur">
+                } @else {
+                  <div class="photo-fallback">{{ getInitials(editingPlayer()!) }}</div>
+                }
+              </div>
+              <div class="photo-upload-section">
+                <label class="photo-upload-label">Changer la photo</label>
+                <input type="file" accept="image/*" (change)="onPhotoFileSelected($event)" class="photo-file-input">
+              </div>
+            </div>
+
+            <div class="edit-fields-section">
+              <div class="fields-grid">
+                <div class="field-row">
+                  <label class="field-label">Nom complet</label>
+                  <input placeholder="Nom complet" [ngModel]="form().fullName" (ngModelChange)="updateField('fullName', $event)">
+                </div>
+                <div class="field-row">
+                  <label class="field-label">Date de naissance</label>
+                  <input type="date" [ngModel]="form().birthDate" (ngModelChange)="updateField('birthDate', $event)">
+                </div>
+                <div class="field-row">
+                  <label class="field-label">Académie</label>
+                  <select [ngModel]="form().academyId ?? ''" (ngModelChange)="onAcademyChange($event)">
+                    <option value="">@if (loadingAcademies()) { Chargement... } @else { Sélectionner }</option>
+                    @for (academy of academies(); track academy.id) {
+                      <option [value]="academy.id">{{ academy.academyName }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="field-row">
+                  <label class="field-label">Catégorie</label>
+                  <select [ngModel]="form().categoryId ?? ''" (ngModelChange)="onCategoryChange($event)" [disabled]="!form().academyId || loadingCategories()">
+                    <option value="">@if (loadingCategories()) { Chargement... } @else { Sélectionner }</option>
+                    @for (category of categories(); track category.id) {
+                      <option [value]="category.id">{{ category.name }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="field-row">
+                  <label class="field-label">Taille (cm)</label>
+                  <input type="number" placeholder="Taille (cm)" [ngModel]="form().heightCm" (ngModelChange)="updateNumberField('heightCm', $event)">
+                </div>
+                <div class="field-row">
+                  <label class="field-label">Poids (kg)</label>
+                  <input type="number" placeholder="Poids (kg)" [ngModel]="form().weightKg" (ngModelChange)="updateNumberField('weightKg', $event)">
+                </div>
+                <div class="field-row">
+                  <label class="field-label">Nom du père</label>
+                  <input placeholder="Nom du père" [ngModel]="form().fatherName" (ngModelChange)="updateField('fatherName', $event)">
+                </div>
+                <div class="field-row">
+                  <label class="field-label">Nom de la mère</label>
+                  <input placeholder="Nom de la mère" [ngModel]="form().motherName" (ngModelChange)="updateField('motherName', $event)">
+                </div>
+                <div class="field-row full-width">
+                  <label class="field-label">Numéro d'enregistrement</label>
+                  <input placeholder="Numéro d'enregistrement" [ngModel]="form().registerNumber" (ngModelChange)="updateField('registerNumber', $event)">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions modal-actions">
+            <button class="secondary" (click)="closeEditPlayerDialog()">Annuler</button>
+            <button (click)="submit()">Enregistrer</button>
+          </div>
         </div>
       </div>
     </div>
@@ -64,74 +109,86 @@
 
   <section class="card">
     <div class="section-header">
-      <h2>Search by Register Number</h2>
+      <h2>Recherche par numéro d'enregistrement</h2>
       <div class="section-actions">
-        <button type="button" class="secondary" (click)="goToAdvancedSearch(); $event.stopPropagation()">Advanced Search</button>
+        <button type="button" class="secondary" (click)="goToAdvancedSearch(); $event.stopPropagation()">Recherche avancée</button>
       </div>
     </div>
     <div class="search-row">
       <input placeholder="REG-2024-001" [ngModel]="registerSearch()" (ngModelChange)="registerSearch.set($event)">
-      <button (click)="onSearch()">Search</button>
-      <button class="secondary" (click)="registerSearch.set(''); loadPlayers()">Reset</button>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>Get Player by ID</h2>
-    <div class="search-row">
-      <input type="number" placeholder="1" [ngModel]="idSearch()" (ngModelChange)="idSearch.set($event)">
-      <button (click)="searchById()">Find</button>
-      <button class="secondary" (click)="idSearch.set(''); loadPlayers()">Reset</button>
+      <button (click)="onSearch()">Rechercher</button>
+      <button class="secondary" (click)="registerSearch.set(''); clearResults();">Réinitialiser</button>
     </div>
   </section>
 
   <section class="card">
     <div class="section-header">
-      <h2>All Players</h2>
+      <h2>Résultats</h2>
       <div class="section-actions">
       @if (can('player_write')) {
-        <button class="create-btn" (click)="openCreatePlayerDialog()">Create Player</button>
+        <button class="create-btn" (click)="openCreatePlayerDialog()">Créer un joueur</button>
       }
       </div>
     </div>
     @if (loading()) {
-      <p>Loading...</p>
-    } @else if (players().length === 0) {
-      <p>No players found.</p>
+      <p>Chargement...</p>
+    } @else if (players().length === 0 && hasSearched()) {
+      <p>Aucun joueur trouvé.</p>
+    } @else if (players().length === 0 && !hasSearched()) {
+      <p>Entrez un numéro d'enregistrement pour rechercher.</p>
     } @else {
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Register #</th>
-              <th>Category</th>
-              <th>Academy</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (player of players(); track player.id) {
-              <tr (click)="openViewer(player)" tabindex="0" (keydown.enter)="openViewer(player)" (keydown.space)="openViewer(player)">
-                <td>{{ player.id }}</td>
-                <td>{{ player.fullName }}</td>
-                <td>{{ player.registerNumber }}</td>
-                <td>{{ player.category }}</td>
-                <td>{{ player.academy }}</td>
-                <td class="row-actions">
-                  <button class="small secondary" (click)="$event.stopPropagation(); openViewer(player)">View</button>
-                  @if (can('player_edit')) {
-                    <button class="small" (click)="$event.stopPropagation(); edit(player)">Edit</button>
-                  }
-                  @if (can('player_delete')) {
-                    <button class="small danger" (click)="$event.stopPropagation(); remove(player)">Delete</button>
-                  }
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+      <div class="players-grid">
+        @for (p of players(); track p.id) {
+          <div class="player-card" (click)="openViewer(p)" tabindex="0" (keydown.enter)="openViewer(p)" (keydown.space)="openViewer(p)" role="button" aria-label="Voir le joueur {{ p.fullName }}">
+            <div class="player-photo">
+              @if (p.photo) {
+                <img
+                  [src]="getPhotoUrl(p)"
+                  [alt]="p.fullName"
+                  (error)="onPhotoError()"
+                >
+              }
+              @if (!p.photo || photoLoadError()) {
+                <div class="photo-placeholder">{{ getInitials(p) }}</div>
+              }
+            </div>
+            <div class="player-info">
+              <h3 class="player-name">{{ p.fullName }}</h3>
+              <div class="player-details">
+                <div class="detail-item">
+                  <span class="detail-label">Académie:</span>
+                  <span class="detail-value">{{ formatAcademy(p.academy) }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Catégorie:</span>
+                  <span class="detail-value">{{ formatCategory(p.category) }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Reg. #:</span>
+                  <span class="detail-value">{{ p.registerNumber }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="player-actions">
+              <button class="action-btn secondary" (click)="$event.stopPropagation(); openViewer(p)" aria-label="Voir le joueur {{ p.fullName }}">
+                <mat-icon>visibility</mat-icon>
+                Voir
+              </button>
+              @if (can('player_edit')) {
+                <button class="action-btn primary" (click)="$event.stopPropagation(); edit(p)" aria-label="Modifier le joueur {{ p.fullName }}">
+                  <mat-icon>edit</mat-icon>
+                  Modifier
+                </button>
+              }
+              @if (can('player_delete')) {
+                <button class="action-btn danger" (click)="$event.stopPropagation(); remove(p)" aria-label="Supprimer le joueur {{ p.fullName }}">
+                  <mat-icon>delete</mat-icon>
+                  Supprimer
+                </button>
+              }
+            </div>
+          </div>
+        }
       </div>
     }
   </section>
@@ -141,41 +198,87 @@
 @if (showCreatePlayerDialog() && can('player_write')) {
   <div class="modal-overlay" (click)="closeCreatePlayerDialog()">
     <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="close-modal" (click)="closeCreatePlayerDialog()">×</button>
       <div class="modal-header">
-        <h3>Create New Player</h3>
-        <button class="close-modal" (click)="closeCreatePlayerDialog()">×</button>
+        <h3>Créer un nouveau joueur</h3>
       </div>
-      <div class="grid create-form">
-        <input placeholder="Full name" [ngModel]="form().fullName" (ngModelChange)="updateField('fullName', $event)">
-        <input type="date" [ngModel]="form().birthDate" (ngModelChange)="updateField('birthDate', $event)">
-        <select [ngModel]="form().academyId ?? ''" (ngModelChange)="onAcademyChange($event)">
-          <option value="">@if (loadingAcademies()) { Loading academies... } @else { Select academy }</option>
-          @for (academy of academies(); track academy.id) {
-            <option [value]="academy.id">{{ academy.academyName }}</option>
-          }
-        </select>
-        <select [ngModel]="form().categoryId ?? ''" (ngModelChange)="onCategoryChange($event)" [disabled]="!form().academyId || loadingCategories()">
-          <option value="">@if (loadingCategories()) { Loading categories... } @else { Select category }</option>
-          @for (category of categories(); track category.id) {
-            <option [value]="category.id">{{ category.name }}</option>
-          }
-        </select>
-        <input placeholder="Register number" [ngModel]="form().registerNumber" (ngModelChange)="updateField('registerNumber', $event)">
-        <input type="number" placeholder="Height (cm)" [ngModel]="form().heightCm" (ngModelChange)="updateNumberField('heightCm', $event)">
-        <input type="number" placeholder="Weight (kg)" [ngModel]="form().weightKg" (ngModelChange)="updateNumberField('weightKg', $event)">
-        <input placeholder="Father name" [ngModel]="form().fatherName" (ngModelChange)="updateField('fatherName', $event)">
-        <input placeholder="Mother name" [ngModel]="form().motherName" (ngModelChange)="updateField('motherName', $event)">
-      </div>
-      <div class="photo-upload-row">
-        <label class="photo-upload-label">Player Photo</label>
-        <input type="file" accept="image/*" (change)="onPhotoFileSelected($event)" class="photo-file-input">
-        @if (form().photo) {
-          <img [src]="form().photo" alt="Preview" class="photo-preview">
+
+      <div class="modal-body">
+        @if (error()) {
+          <div class="error-message">{{ error() }}</div>
         }
-      </div>
-      <div class="actions">
-        <button (click)="submit()">Create</button>
-        <button class="secondary" (click)="closeCreatePlayerDialog()">Cancel</button>
+
+        <div class="edit-layout">
+          <div class="edit-photo-section">
+            <div class="photo-box">
+              @if (form().photo) {
+                <img [src]="form().photo" alt="Photo du joueur">
+              } @else {
+                <div class="photo-fallback">?</div>
+              }
+            </div>
+            <div class="photo-upload-section">
+              <label class="photo-upload-label">Ajouter une photo</label>
+              <input type="file" accept="image/*" (change)="onPhotoFileSelected($event)" class="photo-file-input">
+            </div>
+          </div>
+
+          <div class="edit-fields-section">
+            <div class="fields-grid">
+              <div class="field-row">
+                <label class="field-label">Nom complet</label>
+                <input placeholder="Nom complet" [ngModel]="form().fullName" (ngModelChange)="updateField('fullName', $event)">
+              </div>
+              <div class="field-row">
+                <label class="field-label">Date de naissance</label>
+                <input type="date" [ngModel]="form().birthDate" (ngModelChange)="updateField('birthDate', $event)">
+              </div>
+              <div class="field-row">
+                <label class="field-label">Académie</label>
+                <select [ngModel]="form().academyId ?? ''" (ngModelChange)="onAcademyChange($event)">
+                  <option value="">@if (loadingAcademies()) { Chargement... } @else { Sélectionner }</option>
+                  @for (academy of academies(); track academy.id) {
+                    <option [value]="academy.id">{{ academy.academyName }}</option>
+                  }
+                </select>
+              </div>
+              <div class="field-row">
+                <label class="field-label">Catégorie</label>
+                <select [ngModel]="form().categoryId ?? ''" (ngModelChange)="onCategoryChange($event)" [disabled]="!form().academyId || loadingCategories()">
+                  <option value="">@if (loadingCategories()) { Chargement... } @else { Sélectionner }</option>
+                  @for (category of categories(); track category.id) {
+                    <option [value]="category.id">{{ category.name }}</option>
+                  }
+                </select>
+              </div>
+              <div class="field-row">
+                <label class="field-label">Taille (cm)</label>
+                <input type="number" placeholder="Taille (cm)" [ngModel]="form().heightCm" (ngModelChange)="updateNumberField('heightCm', $event)">
+              </div>
+              <div class="field-row">
+                <label class="field-label">Poids (kg)</label>
+                <input type="number" placeholder="Poids (kg)" [ngModel]="form().weightKg" (ngModelChange)="updateNumberField('weightKg', $event)">
+              </div>
+              <div class="field-row">
+                <label class="field-label">Nom du père</label>
+                <input placeholder="Nom du père" [ngModel]="form().fatherName" (ngModelChange)="updateField('fatherName', $event)">
+              </div>
+              <div class="field-row">
+                <label class="field-label">Nom de la mère</label>
+                <input placeholder="Nom de la mère" [ngModel]="form().motherName" (ngModelChange)="updateField('motherName', $event)">
+              </div>
+              <div class="field-row full-width">
+                <label class="field-label">Numéro d'enregistrement</label>
+                <input placeholder="Numéro d'enregistrement" [ngModel]="form().registerNumber" (ngModelChange)="updateField('registerNumber', $event)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions modal-actions">
+          <button class="secondary" (click)="closeCreatePlayerDialog()">Annuler</button>
+          <button (click)="submit()">Créer</button>
+        </div>
       </div>
     </div>
   </div>
@@ -185,18 +288,20 @@
 @if (showDeletePlayerDialog() && deletingPlayer()) {
   <div class="modal-overlay" (click)="closeDeletePlayerDialog()">
     <div class="modal-content delete-modal" (click)="$event.stopPropagation()">
+      <button class="close-modal" (click)="closeDeletePlayerDialog()">×</button>
       <div class="modal-header">
-        <h3>Delete Player</h3>
-        <button class="close-modal" (click)="closeDeletePlayerDialog()">×</button>
+        <h3>Supprimer le joueur</h3>
       </div>
-      <p class="delete-message">
-        Are you sure you want to delete
-        <strong>{{ deletingPlayer()!.fullName }}</strong>?
-      </p>
-      <p class="delete-hint">This action cannot be undone.</p>
-      <div class="actions modal-actions">
-        <button class="secondary" (click)="closeDeletePlayerDialog()">Cancel</button>
-        <button class="danger" (click)="confirmDeletePlayer()">Delete Player</button>
+      <div class="modal-body">
+        <p class="delete-message">
+          Êtes-vous sûr de vouloir supprimer
+          <strong>{{ deletingPlayer()!.fullName }}</strong> ?
+        </p>
+        <p class="delete-hint">Cette action ne peut pas être annulée.</p>
+        <div class="actions modal-actions">
+          <button class="secondary" (click)="closeDeletePlayerDialog()">Annuler</button>
+          <button class="danger" (click)="confirmDeletePlayer()">Supprimer le joueur</button>
+        </div>
       </div>
     </div>
   </div>
@@ -207,22 +312,22 @@
   <div class="modal-overlay" (click)="closeAdvancedSearchDialog()">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3>Advanced Players Search</h3>
+        <h3>Recherche avancée de joueurs</h3>
         <button class="close-modal" (click)="closeAdvancedSearchDialog()">×</button>
       </div>
 
       <div class="grid create-form">
-        <input placeholder="Name (min 3 chars)" [ngModel]="advancedSearchName()" (ngModelChange)="advancedSearchName.set($event)">
-        <input type="number" placeholder="Category ID" [ngModel]="advancedSearchCategoryId()" (ngModelChange)="advancedSearchCategoryId.set($event)">
-        <input type="date" placeholder="Birth date" [ngModel]="advancedSearchBirthDate()" (ngModelChange)="advancedSearchBirthDate.set($event)">
-        <input type="number" placeholder="Height (cm)" [ngModel]="advancedSearchHeightCm()" (ngModelChange)="advancedSearchHeightCm.set($event)">
-        <input type="number" placeholder="Weight (kg)" [ngModel]="advancedSearchWeightKg()" (ngModelChange)="advancedSearchWeightKg.set($event)">
-        <input type="date" placeholder="Created at" [ngModel]="advancedSearchCreatedAt()" (ngModelChange)="advancedSearchCreatedAt.set($event)">
+        <input placeholder="Nom (min 3 caractères)" [ngModel]="advancedSearchName()" (ngModelChange)="advancedSearchName.set($event)">
+        <input type="number" placeholder="ID de catégorie" [ngModel]="advancedSearchCategoryId()" (ngModelChange)="advancedSearchCategoryId.set($event)">
+        <input type="date" placeholder="Date de naissance" [ngModel]="advancedSearchBirthDate()" (ngModelChange)="advancedSearchBirthDate.set($event)">
+        <input type="number" placeholder="Taille (cm)" [ngModel]="advancedSearchHeightCm()" (ngModelChange)="advancedSearchHeightCm.set($event)">
+        <input type="number" placeholder="Poids (kg)" [ngModel]="advancedSearchWeightKg()" (ngModelChange)="advancedSearchWeightKg.set($event)">
+        <input type="date" placeholder="Date de création" [ngModel]="advancedSearchCreatedAt()" (ngModelChange)="advancedSearchCreatedAt.set($event)">
       </div>
 
       <div class="actions">
-        <button (click)="advancedSearch()">Search</button>
-        <button class="secondary" (click)="closeAdvancedSearchDialog()">Cancel</button>
+        <button (click)="advancedSearch()">Rechercher</button>
+        <button class="secondary" (click)="closeAdvancedSearchDialog()">Annuler</button>
       </div>
     </div>
   </div>
@@ -273,9 +378,9 @@
               type="checkbox"
               [checked]="isPlayerProfileComplete(viewedPlayer()!)"
               disabled
-              aria-label="Joueur autorise"
+              aria-label="Joueur autorisé"
             >
-            <span>Joueur autorise</span>
+            <span>Joueur autorisé</span>
           </div>
         </footer>
       </article>

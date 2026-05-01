@@ -5,7 +5,7 @@
         <path d="M17 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
         <circle cx="12" cy="7" r="4"></circle>
       </svg>
-      Users Management
+      Gestion des Utilisateurs
     </h1>
   </header>
 
@@ -18,44 +18,52 @@
   }
 
   <section class="card">
-    <h2>Search User by Username</h2>
+    <h2>Rechercher un utilisateur par nom d'utilisateur</h2>
     <div class="actions">
       <input placeholder="johndoe" [ngModel]="searchUsername()" (ngModelChange)="searchUsername.set($event)">
-      <button (click)="search()">Search</button>
-      <button class="secondary" (click)="searchUsername.set(''); loadUsers()">Reset</button>
+      <button (click)="search()">Rechercher</button>
+      <button class="secondary" (click)="searchUsername.set(''); loadUsers()">Réinitialiser</button>
     </div>
   </section>
 
-  @if (selected() && can('user_edit')) {
-    <section class="card">
-      <h2>Update User #{{ selected()!.id }}</h2>
-      <div class="grid">
-        <input placeholder="Fullname" [ngModel]="editFullname()" (ngModelChange)="editFullname.set($event)">
-        <input placeholder="Email" [ngModel]="editEmail()" (ngModelChange)="editEmail.set($event)">
-        <input placeholder="Password (optional)" [ngModel]="editPassword()" (ngModelChange)="editPassword.set($event)">
-        <select [ngModel]="editRole()" (ngModelChange)="editRole.set($event)">
-          <option value="standard">standard</option>
-          <option value="admin">admin</option>
-        </select>
+  @if (showEditUserDialog() && can('user_edit')) {
+    <div class="modal-overlay" (click)="closeEditUserDialog()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Modifier l'utilisateur #{{ selected()!.id }}</h3>
+          <button class="close-btn" (click)="closeEditUserDialog()">x</button>
+        </div>
+
+        <div class="grid edit-user-form">
+          <input placeholder="Identifiant" [ngModel]="editIdentifiant()" (ngModelChange)="editIdentifiant.set($event)">
+          <input placeholder="Nom complet" [ngModel]="editFullname()" (ngModelChange)="editFullname.set($event)">
+          <input type="email" placeholder="Email" [ngModel]="editEmail()" (ngModelChange)="editEmail.set($event)">
+          <input type="password" placeholder="Mot de passe (optionnel)" [ngModel]="editPassword()" (ngModelChange)="editPassword.set($event)">
+          <select [ngModel]="editRole()" (ngModelChange)="editRole.set($event)">
+            <option value="standard">standard</option>
+            <option value="admin">admin</option>
+          </select>
+        </div>
+
+        <div class="actions">
+          <button (click)="save()">Enregistrer</button>
+          <button class="secondary" (click)="closeEditUserDialog()">Annuler</button>
+        </div>
       </div>
-      <div class="actions">
-        <button (click)="save()">Save</button>
-        <button class="secondary" (click)="cancelEdit()">Cancel</button>
-      </div>
-    </section>
+    </div>
   }
 
   <section class="card">
     <div class="section-header">
-      <h2>All Users</h2>
+      <h2>Tous les utilisateurs</h2>
       @if (can('user_write')) {
-        <button class="create-btn" (click)="openCreateUserDialog()">Create User</button>
+        <button class="create-btn" (click)="openCreateUserDialog()">Créer un utilisateur</button>
       }
     </div>
     @if (loading()) {
-      <p>Loading...</p>
+      <p>Chargement...</p>
     } @else if (users().length === 0) {
-      <p>No users found.</p>
+      <p>Aucun utilisateur trouvé.</p>
     } @else {
       <div class="table-wrap">
         <table>
@@ -64,7 +72,7 @@
               <th>ID</th>
               <th>Identifiant</th>
               <th>Email</th>
-              <th>Role</th>
+              <th>Rôle</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -77,15 +85,15 @@
                 <td>{{ user.role }}</td>
                 <td class="actions">
                   @if (can('user_edit')) {
-                    <button class="small" (click)="startEdit(user)">Edit</button>
+                    <button class="small" (click)="startEdit(user)">Modifier</button>
                   }
                   @if (can('user_delete')) {
                     <button
                       class="small danger"
                       [disabled]="isAdminUser(user)"
-                      [title]="isAdminUser(user) ? 'Admin users cannot be deleted' : 'Delete user'"
+                      [title]="isAdminUser(user) ? 'Les administrateurs ne peuvent pas être supprimés' : 'Supprimer utilisateur'"
                       (click)="remove(user)">
-                      Delete
+                      Supprimer
                     </button>
                   }
                 </td>
@@ -101,15 +109,15 @@
     <div class="modal-overlay" (click)="closeCreateUserDialog()">
       <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h3>Create New User</h3>
+          <h3>Créer un nouvel utilisateur</h3>
           <button class="close-btn" (click)="closeCreateUserDialog()">x</button>
         </div>
 
         <div class="grid create-user-form">
           <input placeholder="Identifiant" [ngModel]="createIdentifiant()" (ngModelChange)="createIdentifiant.set($event)">
-          <input placeholder="Fullname" [ngModel]="createFullname()" (ngModelChange)="createFullname.set($event)">
+          <input placeholder="Nom complet" [ngModel]="createFullname()" (ngModelChange)="createFullname.set($event)">
           <input type="email" placeholder="Email" [ngModel]="createEmail()" (ngModelChange)="createEmail.set($event)">
-          <input type="password" placeholder="Password" [ngModel]="createPassword()" (ngModelChange)="createPassword.set($event)">
+          <input type="password" placeholder="Mot de passe" [ngModel]="createPassword()" (ngModelChange)="createPassword.set($event)">
           <select [ngModel]="createRole()" (ngModelChange)="createRole.set($event)">
             <option value="standard">standard</option>
             <option value="admin">admin</option>
@@ -117,8 +125,8 @@
         </div>
 
         <div class="actions">
-          <button (click)="createUser()">Create</button>
-          <button class="secondary" (click)="closeCreateUserDialog()">Cancel</button>
+          <button (click)="createUser()">Créer</button>
+          <button class="secondary" (click)="closeCreateUserDialog()">Annuler</button>
         </div>
       </div>
     </div>
@@ -128,19 +136,19 @@
     <div class="modal-overlay" (click)="closeDeleteUserDialog()">
       <div class="modal-content delete-modal" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h3>Confirm User Deletion</h3>
+          <h3>Confirmer la suppression de l'utilisateur</h3>
           <button class="close-btn" (click)="closeDeleteUserDialog()">x</button>
         </div>
 
         <p class="delete-message">
-          Are you sure you want to delete
-          <strong>{{ deletingUser()!.identifiant || deletingUser()!.username || 'this user' }}</strong>?
+          Êtes-vous sûr de vouloir supprimer
+          <strong>{{ deletingUser()!.identifiant || deletingUser()!.username || 'cet utilisateur' }}</strong> ?
         </p>
-        <p class="delete-hint">This action cannot be undone.</p>
+        <p class="delete-hint">Cette action ne peut pas être annulée.</p>
 
         <div class="actions modal-actions">
-          <button class="secondary" (click)="closeDeleteUserDialog()">Cancel</button>
-          <button class="danger" (click)="confirmDeleteUser()">Delete User</button>
+          <button class="secondary" (click)="closeDeleteUserDialog()">Annuler</button>
+          <button class="danger" (click)="confirmDeleteUser()">Supprimer l'utilisateur</button>
         </div>
       </div>
     </div>

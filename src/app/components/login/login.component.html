@@ -1,5 +1,8 @@
 <div class="login-container">
   <mat-card class="login-card">
+    <div class="logo-section">
+      <img src="logo.jpeg" alt="ECMStack Logo" class="login-logo">
+    </div>
     <mat-card-header>
       <mat-card-title>
         <h1 class="page-title">
@@ -7,10 +10,10 @@
             <path d="M12 2C8.13 2 5 5.13 5 9v3l-1 2v2h16v-2l-1-2V9c0-3.87-3.13-7-7-7z"></path>
             <path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path>
           </svg>
-          Welcome Back
+          Bon retour
         </h1>
       </mat-card-title>
-      <mat-card-subtitle>Sign in to your account</mat-card-subtitle>
+      <mat-card-subtitle>Connectez-vous à votre compte</mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content>
@@ -24,38 +27,38 @@
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
         <!-- Identifiant Field -->
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="fill" class="full-width">
           <mat-label>Identifiant</mat-label>
           <input
             matInput
             type="text"
             id="identifiant"
             formControlName="identifiant"
-            placeholder="Enter your identifiant"
+            placeholder="Entrez votre identifiant"
             autocomplete="username"
           />
           <mat-icon matPrefix>person</mat-icon>
           @if (submitted() && f['identifiant'].errors) {
             <mat-error>
               @if (f['identifiant'].errors['required']) {
-                Identifiant is required
+                L'identifiant est requis
               }
               @if (f['identifiant'].errors['minlength']) {
-                Identifiant must be at least 3 characters
+                L'identifiant doit contenir au moins 3 caractères
               }
             </mat-error>
           }
         </mat-form-field>
 
         <!-- Password Field -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Password</mat-label>
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Mot de passe</mat-label>
           <input
             matInput
             [type]="hidePassword() ? 'password' : 'text'"
             id="password"
             formControlName="password"
-            placeholder="Enter your password"
+            placeholder="Entrez votre mot de passe"
             autocomplete="current-password"
           />
           <mat-icon matPrefix>lock</mat-icon>
@@ -64,7 +67,7 @@
             matSuffix
             (click)="hidePassword.set(!hidePassword())"
             type="button"
-            [attr.aria-label]="'Hide password'"
+            [attr.aria-label]="'Masquer le mot de passe'"
             [attr.aria-pressed]="hidePassword()"
           >
             <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
@@ -72,10 +75,10 @@
           @if (submitted() && f['password'].errors) {
             <mat-error>
               @if (f['password'].errors['required']) {
-                Password is required
+                Le mot de passe est requis
               }
               @if (f['password'].errors['minlength']) {
-                Password must be at least 6 characters
+                Le mot de passe doit contenir au moins 6 caractères
               }
             </mat-error>
           }
@@ -92,12 +95,12 @@
           @if (loading()) {
             <ng-container>
               <mat-spinner diameter="20" [strokeWidth]="3"></mat-spinner>
-              <span>Logging in...</span>
+              <span>Connexion en cours...</span>
             </ng-container>
           } @else {
             <ng-container>
               <mat-icon>login</mat-icon>
-              <span>Login</span>
+              <span>Connexion</span>
             </ng-container>
           }
         </button>
