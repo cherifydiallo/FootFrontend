@@ -18,10 +18,6 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "src/main.ts",
-            "server": "src/main.server.ts",
-            "ssr": {
-              "entry": "src/server.ts"
-            },
             "tsConfig": "tsconfig.app.json",
             "polyfills": [
               "zone.js"
@@ -35,7 +31,7 @@
             "styles": [
               "src/styles.scss"
             ],
-            "outputPath": "dist/foot-frontend/browser"
+            "outputPath": "dist/foot-frontend"
           },
           "configurations": {
             "production": {

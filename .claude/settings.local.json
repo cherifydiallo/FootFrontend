@@ -5,7 +5,8 @@
       "Bash(npm start *)",
       "Bash(ng build *)",
       "Bash(npm run *)",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Bash(node copy-index.js)"
     ]
   }
 }

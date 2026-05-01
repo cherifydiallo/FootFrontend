@@ -6,7 +6,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:vercel": "ng build --configuration production && cp dist/foot-frontend/browser/index.csr.html dist/foot-frontend/browser/index.html",
+    "build:vercel": "ng build --configuration production && node move-build.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:foot-frontend": "node dist/foot-frontend/server/server.mjs"
