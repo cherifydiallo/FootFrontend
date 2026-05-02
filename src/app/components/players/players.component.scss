@@ -475,6 +475,28 @@ button.small {
   flex-direction: column;
 }
 
+@media (max-width: 1024px) {
+  .modal-content {
+    max-width: 90%;
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    max-width: 95%;
+    margin: 4px auto;
+    max-height: 95vh;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    max-width: 98%;
+    margin: 2px auto;
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -536,6 +558,7 @@ button.small {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  align-items: center;
 }
 
 .edit-fields-section {
@@ -547,6 +570,88 @@ button.small {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
+}
+
+// Mobile responsive for create/edit player
+@media (max-width: 768px) {
+  .edit-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .edit-photo-section {
+    align-items: center;
+    width: 100%;
+  }
+
+  .photo-box {
+    max-width: 200px;
+    min-height: 200px;
+    width: 100%;
+  }
+
+  .fields-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+
+  .field-row {
+    width: 100%;
+  }
+
+  .field-row input,
+  .field-row select {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 480px) {
+  .edit-layout {
+    gap: 16px;
+  }
+
+  .edit-photo-section {
+    gap: 12px;
+  }
+
+  .photo-box {
+    max-width: 150px;
+    min-height: 150px;
+  }
+
+  .fields-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px;
+  }
+
+  .field-row {
+    padding: 6px 0;
+  }
+
+  .field-label {
+    font-size: 0.75rem;
+  }
+
+  .field-row input,
+  .field-row select {
+    padding: 8px;
+    font-size: 0.85rem;
+    height: 40px;
+  }
+
+  .modal-actions {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 8px;
+  }
+
+  .modal-actions button {
+    flex: 1;
+    min-width: auto;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
 }
 
 .field-row {
@@ -576,6 +681,18 @@ button.small {
   font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
 }
 
+@media (max-width: 768px) {
+  .field-label {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .field-label {
+    font-size: 0.7rem;
+  }
+}
+
 .field-row input,
 .field-row select {
   border: 1px solid #d1d5db;
@@ -584,6 +701,26 @@ button.small {
   font-size: 0.9rem;
   background: white;
   transition: border-color 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .field-row input,
+  .field-row select {
+    padding: 8px;
+    font-size: 0.85rem;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .field-row input,
+  .field-row select {
+    padding: 6px;
+    font-size: 0.8rem;
+    height: 36px;
+  }
 }
 
 .field-row input:focus,
@@ -641,6 +778,20 @@ button.small {
   gap: 12px;
   justify-content: flex-end;
   margin-top: 24px;
+  padding: 16px;
+  border-top: 1px solid #e5e7eb;
+  background: white;
+}
+
+.fixed-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  background: white;
+  border-top: 2px solid #800000;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+  padding: 16px 24px;
+  margin-top: 0;
 }
 
 .modal-actions button {
@@ -651,24 +802,53 @@ button.small {
   transition: all 0.2s ease;
   border: none;
   font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 140px;
+  justify-content: center;
 }
 
 .modal-actions button.danger {
-  background: #dc2626;
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
   color: white;
+  box-shadow: 0 4px 6px rgba(220, 38, 38, 0.3);
 }
 
 .modal-actions button.danger:hover {
-  background: #b91c1c;
+  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(220, 38, 38, 0.4);
 }
 
 .modal-actions button.secondary {
-  background: #4b5563;
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
   color: white;
+  box-shadow: 0 4px 6px rgba(107, 114, 128, 0.3);
 }
 
 .modal-actions button.secondary:hover {
-  background: #374151;
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(107, 114, 128, 0.4);
+}
+
+.modal-actions button.primary {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+}
+
+.modal-actions button.primary:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(16, 185, 129, 0.4);
+}
+
+.modal-actions button mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
 }
 
 .photo-upload-section {
@@ -742,6 +922,9 @@ button.small {
   position: relative;
   overflow: hidden;
   cursor: default;
+  width: 100%;
+  max-width: 260px;
+  margin: 0 auto;
 
   &.clickable {
     cursor: pointer;
@@ -762,6 +945,27 @@ button.small {
     height: 100%;
     object-fit: cover;
     border-radius: 8px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .photo-box {
+    max-width: 200px;
+    min-height: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .photo-box {
+    max-width: 180px;
+    min-height: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .photo-box {
+    max-width: 150px;
+    min-height: 100px;
   }
 }
 
@@ -802,6 +1006,27 @@ button.small {
   font-weight: 800;
   border-radius: 8px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 1024px) {
+  .photo-fallback {
+    min-height: 200px;
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .photo-fallback {
+    min-height: 120px;
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .photo-fallback {
+    min-height: 100px;
+    font-size: 24px;
+  }
 }
 
 // Viewer overlay and dialog styles
@@ -1159,8 +1384,8 @@ button.small {
   }
 
   .modal-content {
-    max-width: 100%;
-    margin: 4px;
+    max-width: 95%;
+    margin: 4px auto;
     max-height: 95vh;
     overflow-y: auto;
   }
@@ -1200,45 +1425,11 @@ button.small {
   }
 
   .modal-body {
-    padding: 12px;
-  }
-
-  .edit-layout {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .fields-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
+    padding: 16px 12px;
   }
 
   .edit-photo-section {
     align-items: center;
-  }
-
-  .photo-box,
-  .photo-fallback {
-    min-height: 120px;
-    max-height: 120px;
-  }
-
-  .photo-fallback {
-    font-size: 28px;
-  }
-
-  .field-row {
-    padding: 4px 0;
-  }
-
-  .field-label {
-    font-size: 0.75rem;
-  }
-
-  .field-row input,
-  .field-row select {
-    padding: 8px;
-    font-size: 0.85rem;
   }
 
   .grid {
@@ -1267,13 +1458,22 @@ button.small {
   }
 
   .modal-actions {
-    flex-direction: column;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
     padding: 16px;
     margin-top: 16px;
     position: sticky;
     bottom: 0;
     background: white;
     border-top: 1px solid #e5e7eb;
+    gap: 8px;
+  }
+
+  .modal-actions button {
+    flex: 1;
+    min-width: auto;
+    padding: 10px 12px;
+    font-size: 0.85rem;
   }
 
   .modal-actions button {

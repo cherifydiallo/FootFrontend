@@ -405,55 +405,8 @@ button.small {
   }
 
   .create-form {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 8px !important;
-  }
-
-  .fields-grid.create-form {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 8px !important;
-  }
-
-  .fields-grid:not(.create-form) {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 8px;
-  }
-
-  .create-form .field-row {
-    padding: 4px 0 !important;
-    width: 100% !important;
-  }
-
-  .create-form .field-row input,
-  .create-form .field-row select {
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  .field-row {
-    padding: 4px 0;
-  }
-
-  .create-form .field-row {
-    padding: 4px 0 !important;
-  }
-
-  .field-label {
-    font-size: 0.75rem;
-  }
-
-  .field-row input,
-  .field-row select {
-    padding: 8px;
-    font-size: 0.85rem;
-  }
-
-  .create-form .field-row input,
-  .create-form .field-row select {
-    padding: 8px !important;
-    font-size: 0.85rem !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
   }
 
   .players-grid {
@@ -520,14 +473,14 @@ button.small {
 
   .photo-box,
   .photo-fallback {
-    min-height: 150px;
-    max-height: 150px;
+    min-height: 120px;
+    max-height: 120px;
     width: 100%;
     margin: 0 auto;
   }
 
   .photo-fallback {
-    font-size: 32px;
+    font-size: 24px;
   }
 
   .info-row {
@@ -595,127 +548,11 @@ button.small {
   }
 
   .modal-body {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .edit-layout {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 100%;
+    padding: 16px 12px;
   }
 
   .edit-photo-section {
-    order: -1;
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    width: 100%;
-    gap: 12px;
-  }
-
-  .photo-box,
-  .photo-fallback {
-    min-height: 180px;
-    max-height: 180px;
-    width: 100%;
-    max-width: 300px;
-  }
-
-  .photo-fallback {
-    font-size: 36px;
-  }
-
-  .photo-upload-section {
-    width: 100%;
-    max-width: 300px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .edit-fields-section {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .fields-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    width: 100%;
-  }
-
-  .field-row {
-    width: 100%;
-    padding: 10px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .field-row.full-width {
-    width: 100%;
-  }
-
-  .field-label {
-    font-size: 0.9rem;
-    margin-bottom: 4px;
-    font-weight: 600;
-  }
-
-  .field-row input,
-  .field-row select {
-    padding: 12px;
-    font-size: 0.95rem;
-    width: 100%;
-    border-radius: 6px;
-  }
-
-  .photo-upload-section {
-    width: 100%;
-    max-width: 300px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .photo-upload-label {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #374151;
-    text-align: center;
-    margin-bottom: 8px;
-  }
-
-  .photo-file-input {
-    width: 100%;
-    text-align: center;
-  }
-
-  .modal-actions {
-    flex-direction: column;
-    padding: 16px;
-    margin-top: 20px;
-    position: sticky;
-    bottom: 0;
-    background: white;
-    border-top: 1px solid #e5e7eb;
-    gap: 12px;
-  }
-
-  .modal-actions button {
-    width: 100%;
-    padding: 14px;
-    font-size: 1rem;
-    font-weight: 600;
   }
 
   // Photo viewer mobile styles
@@ -898,6 +735,27 @@ button.small {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+@media (max-width: 1024px) {
+  .photo-fallback {
+    min-height: 200px;
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .photo-fallback {
+    min-height: 120px;
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .photo-fallback {
+    min-height: 100px;
+    font-size: 24px;
+  }
+}
+
 .license-info {
   display: flex;
   flex-direction: column;
@@ -1077,6 +935,27 @@ button.small {
   margin-bottom: 24px;
 }
 
+@media (max-width: 1024px) {
+  .edit-layout {
+    grid-template-columns: 200px 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .edit-layout {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .edit-layout {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
 .edit-photo-section {
   display: flex;
   flex-direction: column;
@@ -1101,6 +980,18 @@ button.small {
   border-bottom: 1px solid #fee2e2;
   padding: 8px 0;
   transition: background-color 0.2s ease;
+}
+
+@media (max-width: 768px) {
+  .field-row {
+    padding: 6px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .field-row {
+    padding: 4px 0;
+  }
 }
 
 .field-row.full-width {
@@ -1129,6 +1020,26 @@ button.small {
   font-size: 0.9rem;
   background: white;
   transition: border-color 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .field-row input,
+  .field-row select {
+    padding: 8px;
+    font-size: 0.85rem;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .field-row input,
+  .field-row select {
+    padding: 6px;
+    font-size: 0.8rem;
+    height: 36px;
+  }
 }
 
 .field-row input:focus,
@@ -1291,6 +1202,9 @@ button.small {
   position: relative;
   overflow: hidden;
   cursor: default;
+  width: 100%;
+  max-width: 260px;
+  margin: 0 auto;
 
   &.clickable {
     cursor: pointer;
@@ -1311,6 +1225,27 @@ button.small {
     height: 100%;
     object-fit: cover;
     border-radius: 8px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .photo-box {
+    max-width: 200px;
+    min-height: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .photo-box {
+    max-width: 180px;
+    min-height: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .photo-box {
+    max-width: 150px;
+    min-height: 100px;
   }
 }
 
@@ -1396,107 +1331,5 @@ button.small {
   svg {
     width: 24px;
     height: 24px;
-  }
-}
-
-// Mobile-specific override for edit modal layout
-@media (max-width: 768px) {
-  .modal-content .edit-layout {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 16px !important;
-    width: 100% !important;
-  }
-
-  .modal-content .edit-photo-section {
-    order: -1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100% !important;
-    gap: 4px !important;
-    max-height: 40vh !important;
-  }
-
-  .modal-content .photo-box,
-  .modal-content .photo-fallback {
-    min-height: 120px !important;
-    max-height: 120px !important;
-    width: 100% !important;
-    max-width: 200px !important;
-  }
-
-  .modal-content .photo-fallback {
-    font-size: 28px !important;
-  }
-
-  .modal-content .photo-upload-section {
-    width: 100% !important;
-    max-width: 200px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    gap: 4px !important;
-  }
-
-  .modal-content .edit-fields-section {
-    width: 100% !important;
-    max-width: 90% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    margin: 0 auto !important;
-  }
-
-  .modal-content .fields-grid {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
-    width: 100% !important;
-    margin: 0 auto !important;
-  }
-
-  .modal-content .field-row {
-    width: 100% !important;
-    padding: 4px 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 3px !important;
-    margin: 0 auto !important;
-  }
-
-  .modal-content .field-row.full-width {
-    width: 100% !important;
-  }
-
-  .modal-content .field-label {
-    font-size: 0.85rem !important;
-    margin-bottom: 2px !important;
-    font-weight: 600 !important;
-  }
-
-  .modal-content .field-row input,
-  .modal-content .field-row select {
-    padding: 10px !important;
-    font-size: 0.9rem !important;
-    width: 100% !important;
-    border-radius: 6px !important;
-    box-sizing: border-box !important;
-  }
-
-  .modal-content .modal-actions {
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
-    padding: 12px !important;
-  }
-
-  .modal-content .modal-actions button {
-    width: 100% !important;
-    padding: 12px !important;
-    font-size: 0.95rem !important;
-    font-weight: 600 !important;
   }
 }
