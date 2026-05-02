@@ -8,6 +8,7 @@ import { FeatureAccessService } from '../../services/feature-access.service';
 import { NotificationService } from '../../services/notification.service';
 import { Academy, AcademyCategory, AcademyService } from '../../services/academy.service';
 import { MatIconModule } from '@angular/material/icon';
+import { PlayerViewerEditComponent } from '../player-viewer-edit/player-viewer-edit.component';
 
 interface PlayerFormState {
   fullName: string;
@@ -25,7 +26,7 @@ interface PlayerFormState {
 @Component({
   selector: 'app-players',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule],
+  imports: [CommonModule, FormsModule, MatIconModule, PlayerViewerEditComponent],
   templateUrl: './players.component.html',
   styleUrls: ['./players.component.scss']
 })
@@ -35,13 +36,8 @@ export class PlayersComponent implements OnInit {
   error = signal<string | null>(null);
   success = signal<string | null>(null);
   hasSearched = signal(false);
-  showDeletePlayerDialog = signal(false);
-  deletingPlayer = signal<Player | null>(null);
   showCreatePlayerDialog = signal(false);
-  showEditPlayerDialog = signal(false);
   showAdvancedSearchDialog = signal(false);
-  showPhotoViewer = signal(false);
-  showViewPhotoViewer = signal(false);
   registerSearch = signal('');
   idSearch = signal('');
   advancedSearchName = signal('');
@@ -50,13 +46,12 @@ export class PlayersComponent implements OnInit {
   advancedSearchHeightCm = signal('');
   advancedSearchWeightKg = signal('');
   advancedSearchCreatedAt = signal('');
-  editingPlayer = signal<Player | null>(null);
-  viewedPlayer = signal<Player | null>(null);
-  photoLoadError = signal(false);
-  academies = signal<Academy[]>([]);
-  categories = signal<AcademyCategory[]>([]);
-  loadingAcademies = signal(false);
-  loadingCategories = signal(false);
+
+  // Shared component state
+  selectedPlayer = signal<Player | null>(null);
+  triggerView = signal(false);
+  triggerEdit = signal(false);
+  triggerDelete = signal(false);
 
   form = signal<PlayerFormState>({
     fullName: '',
@@ -70,6 +65,11 @@ export class PlayersComponent implements OnInit {
     motherName: '',
     photo: ''
   });
+
+  academies = signal<Academy[]>([]);
+  categories = signal<AcademyCategory[]>([]);
+  loadingAcademies = signal(false);
+  loadingCategories = signal(false);
 
   constructor(
     private playerService: PlayerService,
@@ -198,6 +198,11 @@ export class PlayersComponent implements OnInit {
         this.error.set(null);
         this.loading.set(false);
 
+        // Show notification if no player found
+        if (!player) {
+          this.notificationService.show('Pas de joueurs trouvés', 'info', 3000);
+        }
+
         // Auto-scroll to results if players are found
         if (player) {
           setTimeout(() => {
@@ -222,49 +227,51 @@ export class PlayersComponent implements OnInit {
     this.error.set(null);
   }
 
-  edit(player: Player): void {
-    const academyId = Number(player.academyId) || null;
-    const categoryId = Number(player.categoryId) || null;
-
-    this.editingPlayer.set(player);
-    this.form.set({
-      fullName: player.fullName,
-      birthDate: player.birthDate,
-      academyId,
-      categoryId,
-      registerNumber: player.registerNumber,
-      heightCm: player.heightCm,
-      weightKg: player.weightKg,
-      fatherName: player.fatherName,
-      motherName: player.motherName,
-      photo: player.photo || ''
-    });
-
-    if (academyId) {
-      this.loadCategories(academyId, categoryId || undefined);
-    } else {
-      this.categories.set([]);
-    }
-
-    // open edit modal
-    this.showEditPlayerDialog.set(true);
+  // Shared component handlers
+  onPlayerDeleted(player: Player): void {
+    this.loadPlayers();
   }
 
-  openEditPlayerDialog(player: Player): void {
-    this.edit(player);
-    // edit() already opens the dialog by setting showEditPlayerDialog
+  onPlayerUpdated(player: Player): void {
+    this.loadPlayers();
   }
 
-  closeEditPlayerDialog(): void {
-    this.showEditPlayerDialog.set(false);
-    this.resetForm();
-    this.editingPlayer.set(null);
+  // View player using shared component
+  viewPlayer(player: Player): void {
+    this.selectedPlayer.set(player);
+    this.triggerView.set(true);
+    // Reset trigger after a short delay
+    setTimeout(() => this.triggerView.set(false), 100);
+  }
+
+  // Edit player using shared component
+  editPlayer(player: Player): void {
+    this.selectedPlayer.set(player);
+    this.triggerEdit.set(true);
+    // Reset trigger after a short delay
+    setTimeout(() => this.triggerEdit.set(false), 100);
+  }
+
+  // Delete player using shared component
+  deletePlayer(player: Player): void {
+    this.selectedPlayer.set(player);
+    this.triggerDelete.set(true);
+    // Reset trigger after a short delay
+    setTimeout(() => this.triggerDelete.set(false), 100);
+  }
+
+  getInitials(player: Player): string {
+    return player.fullName
+      .split(' ')
+      .filter((part) => part)
+      .slice(0, 2)
+      .map((part) => part.charAt(0).toUpperCase())
+      .join('') || 'P';
   }
 
   resetForm(): void {
-    this.editingPlayer.set(null);
-    this.error.set(null);
     this.success.set(null);
+    this.error.set(null);
     this.form.set({
       fullName: '',
       birthDate: '',
@@ -281,12 +288,7 @@ export class PlayersComponent implements OnInit {
   }
 
   submit(): void {
-    if (this.editingPlayer() && !this.can('player_edit')) {
-      this.error.set('Access denied for editing players');
-      return;
-    }
-
-    if (!this.editingPlayer() && !this.can('player_write')) {
+    if (!this.can('player_write')) {
       this.error.set('Access denied for creating players');
       return;
     }
@@ -318,20 +320,6 @@ export class PlayersComponent implements OnInit {
       photo: form.photo?.trim() ? form.photo : null
     };
 
-    const editing = this.editingPlayer();
-    if (editing) {
-      this.playerService.updatePlayer(editing.id, payload).subscribe({
-        next: () => {
-          this.success.set('Player updated successfully');
-          this.notificationService.showSuccess('Player updated successfully');
-          this.resetForm();
-          this.loadPlayers();
-        },
-        error: () => this.error.set('Failed to update player')
-      });
-      return;
-    }
-
     this.playerService.createPlayer(payload).subscribe({
       next: () => {
         this.success.set('Player created successfully');
@@ -349,15 +337,18 @@ export class PlayersComponent implements OnInit {
     this.showCreatePlayerDialog.set(true);
   }
 
+  closeCreatePlayerDialog(): void {
+    this.showCreatePlayerDialog.set(false);
+    this.resetForm();
+  }
+
   openAdvancedSearchDialog(): void {
-    // reset advanced search fields
     this.advancedSearchName.set('');
     this.advancedSearchCategoryId.set('');
     this.advancedSearchBirthDate.set('');
     this.advancedSearchHeightCm.set('');
     this.advancedSearchWeightKg.set('');
     this.advancedSearchCreatedAt.set('');
-    // ensure categories are loaded for academy/category selection if needed
     this.loadAcademies();
     this.showAdvancedSearchDialog.set(true);
   }
@@ -414,7 +405,6 @@ export class PlayersComponent implements OnInit {
     const createdAt = String(this.advancedSearchCreatedAt()).trim();
     if (createdAt) params['createdAt'] = createdAt;
 
-    // If no params provided, just reload players
     if (Object.keys(params).length === 0) {
       this.loadPlayers();
       this.closeAdvancedSearchDialog();
@@ -428,6 +418,16 @@ export class PlayersComponent implements OnInit {
         this.players.set(this.normalizePlayers(list));
         this.loading.set(false);
         this.showAdvancedSearchDialog.set(false);
+
+        // Auto-scroll to results if players are found
+        if (list.length > 0) {
+          setTimeout(() => {
+            const resultsElement = document.getElementById('player-results');
+            if (resultsElement) {
+              resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }, 100);
+        }
       },
       error: () => {
         this.error.set('Failed to perform advanced search');
@@ -436,61 +436,17 @@ export class PlayersComponent implements OnInit {
     });
   }
 
-  closeCreatePlayerDialog(): void {
-    this.showCreatePlayerDialog.set(false);
-    this.resetForm();
-  }
+  // Photo handling for create player
+  showPhotoViewer = signal(false);
 
-  remove(player: Player): void {
-    if (!this.can('player_delete')) {
-      this.error.set('Access denied for deleting players');
-      return;
+  openPhotoViewer(): void {
+    if (this.form().photo) {
+      this.showPhotoViewer.set(true);
     }
-
-    this.deletingPlayer.set(player);
-    this.showDeletePlayerDialog.set(true);
   }
 
-  closeDeletePlayerDialog(): void {
-    this.showDeletePlayerDialog.set(false);
-    this.deletingPlayer.set(null);
-  }
-
-  confirmDeletePlayer(): void {
-    const player = this.deletingPlayer();
-    if (!player) {
-      return;
-    }
-
-    this.playerService.deletePlayer(player.id).subscribe({
-      next: () => {
-        this.success.set('Player deleted successfully');
-        this.notificationService.showSuccess('Player deleted successfully');
-        if (this.viewedPlayer()?.id === player.id) {
-          this.closeViewer();
-        }
-        this.closeDeletePlayerDialog();
-        this.loadPlayers();
-      },
-      error: () => {
-        this.error.set('Failed to delete player');
-        this.closeDeletePlayerDialog();
-      }
-    });
-  }
-
-  openViewer(player: Player): void {
-    this.photoLoadError.set(false);
-    this.viewedPlayer.set(player);
-  }
-
-  closeViewer(): void {
-    this.viewedPlayer.set(null);
-    this.photoLoadError.set(false);
-  }
-
-  onPhotoError(): void {
-    this.photoLoadError.set(true);
+  closePhotoViewer(): void {
+    this.showPhotoViewer.set(false);
   }
 
   onPhotoFileSelected(event: Event): void {
@@ -505,112 +461,6 @@ export class PlayersComponent implements OnInit {
       this.updateField('photo', reader.result as string);
     };
     reader.readAsDataURL(file);
-  }
-
-  openPhotoViewer(): void {
-    if (this.form().photo) {
-      this.showPhotoViewer.set(true);
-    }
-  }
-
-  closePhotoViewer(): void {
-    this.showPhotoViewer.set(false);
-  }
-
-  openViewPhotoViewer(): void {
-    if (this.viewedPlayer()?.photo && !this.photoLoadError()) {
-      this.showViewPhotoViewer.set(true);
-    }
-  }
-
-  closeViewPhotoViewer(): void {
-    this.showViewPhotoViewer.set(false);
-  }
-
-  getPhotoUrl(player: Player): string {
-    return player.photo || '';
-  }
-
-  getInitials(player: Player): string {
-    return player.fullName
-      .split(' ')
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part.charAt(0).toUpperCase())
-      .join('') || 'P';
-  }
-
-  formatBirthDate(value: string): string {
-    if (!value) {
-      return '-';
-    }
-
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) {
-      return value;
-    }
-
-    return new Intl.DateTimeFormat('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    }).format(date);
-  }
-
-  formatHeightCm(heightCm: number): string {
-    if (!heightCm) {
-      return '-';
-    }
-
-    const meters = Math.floor(heightCm / 100);
-    const centimeters = heightCm % 100;
-    return `${meters}m${String(centimeters).padStart(2, '0')}`;
-  }
-
-  formatCategory(category: AcademyCategory | string | undefined): string {
-    if (!category) {
-      return '-';
-    }
-    if (typeof category === 'string') {
-      return category;
-    }
-    return category.name || '-';
-  }
-
-  formatAcademy(academy: Academy | string | undefined): string {
-    if (!academy) {
-      return '-';
-    }
-    if (typeof academy === 'string') {
-      return academy;
-    }
-    return academy.academyName || '-';
-  }
-
-  isPlayerProfileComplete(player: Player): boolean {
-    return this.hasValue(player.fullName)
-      && this.hasValue(player.birthDate)
-      && this.hasValue(player.academy)
-      && this.hasValue(player.category)
-      && this.hasValue(player.registerNumber)
-      && this.hasNumber(player.heightCm)
-      && this.hasNumber(player.weightKg)
-      && this.hasValue(player.fatherName)
-      && this.hasValue(player.motherName);
-  }
-
-  private hasValue(value: unknown): boolean {
-    if (typeof value !== 'string') {
-      return false;
-    }
-
-    const normalized = value.trim();
-    return !!normalized && normalized !== '-';
-  }
-
-  private hasNumber(value: unknown): boolean {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) && parsed > 0;
   }
 
   private normalizePlayers(list: any): Player[] {
